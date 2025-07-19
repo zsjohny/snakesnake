@@ -223,7 +223,7 @@ jobs:
         run: |
           mkdir -p dist
           zip -r dist/snakesnake.zip . -x "node_modules/*" ".git/*" "tests/*" "docs/*" "images/*" ".github/*" "*.md" "docker-compose.yml" "Dockerfile"
-      
+
       - name: Upload release assets
         uses: actions/upload-release-asset@v2
         env:
