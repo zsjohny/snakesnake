@@ -1,31 +1,30 @@
+// profile.js
 const app = getApp()
+const Logger = require('../../utils/logger')
 
 Page({
   data: {
-    // 用户信息
     userInfo: null,
-    userLevel: 1,
-    userId: '000000',
-
-    // 游戏统计
-    totalGames: 0,
-    totalScore: 0,
-    bestScore: 0,
-    winRate: 0,
-    totalTime: '0小时',
-    maxLength: 0,
-
-    // 成就系统
+    gameStats: {
+      totalGames: 0,
+      bestScore: 0,
+      averageScore: 0,
+      winRate: 0,
+      totalPlayTime: 0
+    },
     achievements: [],
     achievementCount: 0,
     totalAchievements: 0,
-
-    // 最近游戏
-    recentGames: []
+    recentGames: [],
+    settings: {
+      soundEnabled: true,
+      vibrationEnabled: true,
+      notificationsEnabled: true
+    }
   },
 
   onLoad() {
-    console.log('个人资料页面加载')
+    Logger.pageLoad('个人资料')
     this.loadUserInfo()
     this.loadGameStats()
     this.loadAchievements()
@@ -44,43 +43,32 @@ Page({
         userInfo
       })
     } else {
-      // 如果没有用户信息，尝试获取
-      wx.getUserProfile({
-        desc: '用于完善用户资料',
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo
-          })
-        },
-        fail: () => {
-          console.log('用户拒绝授权')
-        }
+      // 如果没有用户信息，生成一个临时用户ID
+      const tempUserInfo = {
+        nickName: `玩家${this.generateUserId()}`,
+        avatarUrl: '/images/default-avatar.png'
+      }
+      this.setData({
+        userInfo: tempUserInfo
       })
     }
-
-    // 生成用户ID和等级
-    this.setData({
-      userId: this.generateUserId(),
-      userLevel: Math.floor(Math.random() * 50) + 1
-    })
   },
 
   generateUserId() {
-    // 生成6位数字用户ID
-    return Math.floor(100000 + Math.random() * 900000).toString()
+    return Math.floor(Math.random() * 10000) + 1000
   },
 
   loadGameStats() {
     // 模拟加载游戏统计数据
     // 实际项目中应该从服务器获取
     this.setData({
-      totalGames: Math.floor(Math.random() * 500) + 50,
-      totalScore: Math.floor(Math.random() * 100000) + 10000,
-      bestScore: Math.floor(Math.random() * 15000) + 5000,
-      winRate: Math.floor(Math.random() * 40) + 60,
-      totalTime: `${Math.floor(Math.random() * 100) + 10}小时`,
-      maxLength: Math.floor(Math.random() * 50) + 10
+      gameStats: {
+        totalGames: Math.floor(Math.random() * 500) + 50,
+        bestScore: Math.floor(Math.random() * 15000) + 5000,
+        averageScore: Math.floor(Math.random() * 8000) + 2000,
+        winRate: Math.floor(Math.random() * 40) + 60,
+        totalPlayTime: Math.floor(Math.random() * 10000) + 1000
+      }
     })
   },
 
@@ -169,7 +157,7 @@ Page({
 
   // 更新成就统计的辅助函数
   updateAchievementStats(achievements) {
-    const unlockedCount = achievements.filter(item => item.unlocked).length
+    const unlockedCount = achievements.filter((item) => item.unlocked).length
     this.setData({
       achievementCount: unlockedCount,
       totalAchievements: achievements.length
@@ -229,6 +217,7 @@ Page({
 
   // 用户操作
   editProfile() {
+    Logger.userAction('编辑资料')
     wx.showModal({
       title: '编辑资料',
       content: '功能开发中，敬请期待！',
@@ -238,6 +227,7 @@ Page({
   },
 
   viewAllHistory() {
+    Logger.userAction('查看完整历史')
     wx.showModal({
       title: '游戏历史',
       content: '完整游戏历史功能开发中！',
@@ -248,6 +238,7 @@ Page({
 
   // 设置功能
   openSoundSettings() {
+    Logger.userAction('打开音效设置')
     wx.showModal({
       title: '音效设置',
       content: '音效设置功能开发中！',
@@ -257,6 +248,7 @@ Page({
   },
 
   openControlSettings() {
+    Logger.userAction('打开控制设置')
     wx.showModal({
       title: '控制设置',
       content: '控制设置功能开发中！',
@@ -266,6 +258,7 @@ Page({
   },
 
   openNotificationSettings() {
+    Logger.userAction('打开通知设置')
     wx.showModal({
       title: '通知设置',
       content: '通知设置功能开发中！',
@@ -275,6 +268,7 @@ Page({
   },
 
   openPrivacySettings() {
+    Logger.userAction('打开隐私设置')
     wx.showModal({
       title: '隐私设置',
       content: '隐私设置功能开发中！',
@@ -285,6 +279,7 @@ Page({
 
   // 其他功能
   shareApp() {
+    Logger.userAction('分享应用')
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
@@ -292,6 +287,7 @@ Page({
   },
 
   rateApp() {
+    Logger.userAction('评价应用')
     wx.showModal({
       title: '评价应用',
       content: '感谢您的支持！请在应用商店给我们五星好评！',
@@ -301,42 +297,42 @@ Page({
   },
 
   contactSupport() {
+    Logger.userAction('联系客服')
     wx.showModal({
       title: '联系客服',
-      content: '客服QQ: 123456789\n客服微信: snakegame_support',
+      content: '客服功能开发中！如有问题请发送邮件至：support@snakesnake.com',
       showCancel: false,
       confirmText: '知道了'
     })
   },
 
   aboutApp() {
+    Logger.userAction('关于应用')
     wx.showModal({
-      title: '关于应用',
+      title: '关于贪食蛇大战',
       content:
-        '贪食蛇大战 v1.0.0\n\n一款多人在线实时对战的贪食蛇游戏\n\n开发者: SnakeGame Team\n\n感谢您的使用！',
+        '版本：1.1.2\n开发者：SnakeSnake Team\n\n一款多人在线实时对战的贪食蛇游戏！',
       showCancel: false,
       confirmText: '知道了'
     })
   },
 
   logout() {
+    Logger.userAction('退出登录')
     wx.showModal({
-      title: '退出登录',
+      title: '确认退出',
       content: '确定要退出登录吗？',
-      success: res => {
+      success: (res) => {
         if (res.confirm) {
           // 清除用户信息
           app.globalData.userInfo = null
+          this.setData({
+            userInfo: null
+          })
 
           // 返回首页
           wx.switchTab({
-            url: '/pages/index/index',
-            success: () => {
-              wx.showToast({
-                title: '已退出登录',
-                icon: 'success'
-              })
-            }
+            url: '/pages/index/index'
           })
         }
       }
@@ -345,16 +341,16 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '🐍 贪食蛇大战 - 多人在线实时对战',
-      path: '/pages/index/index',
-      imageUrl: '/images/share.png'
+      title: '🐍 贪食蛇大战 - 查看我的游戏成就！',
+      path: '/pages/profile/profile',
+      imageUrl: '/images/share-profile.png'
     }
   },
 
   onShareTimeline() {
     return {
-      title: '🐍 贪食蛇大战 - 多人在线实时对战',
-      imageUrl: '/images/share.png'
+      title: '🐍 贪食蛇大战 - 查看我的游戏成就！',
+      imageUrl: '/images/share-profile.png'
     }
   }
 })

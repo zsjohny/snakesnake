@@ -1,8 +1,9 @@
+// game.js
 const app = getApp()
+const Logger = require('../../utils/logger')
 
 Page({
   data: {
-    // 游戏状态
     score: 0,
     snakeLength: 3,
     rank: 1,
@@ -10,17 +11,11 @@ Page({
     isPaused: false,
     isGameOver: false,
     showRanking: false,
-
-    // 画布尺寸
     canvasWidth: 800,
     canvasHeight: 600,
-
-    // 游戏信息
     giftCount: 0,
     blackHoleCount: 0,
     gameTime: '00:00',
-
-    // 排行榜
     rankingList: []
   },
 
@@ -28,10 +23,24 @@ Page({
   gameLoop: null,
   canvas: null,
   ctx: null,
-  gameConfig: null,
+  gameConfig: {
+    canvasWidth: 800,
+    canvasHeight: 600,
+    gridSize: 20,
+    gameSpeed: 150,
+    maxPlayers: 20,
+    giftSpawnInterval: 10000,
+    blackHoleSpawnInterval: 15000,
+    maxGifts: 10,
+    maxBlackHoles: 5
+  },
 
   // 游戏状态
-  snake: [],
+  snake: [
+    { x: 400, y: 300 },
+    { x: 380, y: 300 },
+    { x: 360, y: 300 }
+  ],
   direction: 'right',
   nextDirection: 'right',
   food: [],
@@ -51,34 +60,27 @@ Page({
   socket: null,
 
   onLoad() {
-    console.log('游戏页面加载')
+    Logger.pageLoad('游戏')
     this.initGame()
   },
 
   onShow() {
-    // 页面显示时恢复游戏
-    if (this.gameLoop && !this.data.isPaused && !this.data.isGameOver) {
+    if (this.data.isPaused) {
       this.resumeGame()
     }
   },
 
   onHide() {
-    // 页面隐藏时暂停游戏
-    if (this.gameLoop && !this.data.isGameOver) {
-      this.pauseGame()
-    }
+    this.pauseGame()
   },
 
   onUnload() {
-    // 页面卸载时清理资源
     this.cleanup()
   },
 
   initGame() {
-    // 获取游戏配置
-    this.gameConfig = app.globalData.gameConfig
-
-    // 设置画布尺寸
+    // 初始化游戏配置
+    this.gameConfig = { ...app.globalData.gameConfig }
     this.setData({
       canvasWidth: this.gameConfig.canvasWidth,
       canvasHeight: this.gameConfig.canvasHeight
@@ -87,188 +89,229 @@ Page({
     // 初始化画布
     this.initCanvas()
 
-    // 初始化游戏状态
-    this.initGameState()
+    // 生成初始食物
+    this.generateFood()
 
     // 连接WebSocket
     this.connectWebSocket()
 
-    // 开始游戏循环
-    this.startGameLoop()
-
-    // 开始游戏时间计时
-    this.startGameTimer()
-
-    // 开始生成礼包和黑洞
-    this.startSpawnTimers()
+    // 开始游戏
+    this.startGame()
   },
 
   initCanvas() {
-    // 获取画布上下文
-    this.canvas = wx.createCanvasContext('gameCanvas')
-    this.ctx = this.canvas
+    const query = wx.createSelectorQuery()
+    query
+      .select('#gameCanvas')
+      .fields({ node: true, size: true })
+      .exec((res) => {
+        const canvas = res[0].node
+        const ctx = canvas.getContext('2d')
 
-    // 设置画布样式
-    this.ctx.setFillStyle('#2c3e50')
-    this.ctx.fillRect(
-      0,
-      0,
-      this.gameConfig.canvasWidth,
-      this.gameConfig.canvasHeight
-    )
-    this.ctx.draw()
-  },
+        const dpr = wx.getSystemInfoSync().pixelRatio
+        canvas.width = this.gameConfig.canvasWidth * dpr
+        canvas.height = this.gameConfig.canvasHeight * dpr
+        ctx.scale(dpr, dpr)
 
-  initGameState() {
-    // 初始化蛇的位置
-    const startX =
-      Math.floor(this.gameConfig.canvasWidth / this.gameConfig.gridSize / 2) *
-      this.gameConfig.gridSize
-    const startY =
-      Math.floor(this.gameConfig.canvasHeight / this.gameConfig.gridSize / 2) *
-      this.gameConfig.gridSize
+        this.canvas = canvas
+        this.ctx = ctx
 
-    this.snake = [
-      { x: startX, y: startY },
-      { x: startX - this.gameConfig.gridSize, y: startY },
-      { x: startX - this.gameConfig.gridSize * 2, y: startY }
-    ]
-
-    this.direction = 'right'
-    this.nextDirection = 'right'
-
-    // 生成初始食物
-    this.generateFood()
-
-    // 初始化其他玩家
-    this.otherPlayers = []
-
-    // 初始化礼包和黑洞
-    this.gifts = []
-    this.blackHoles = []
-
-    // 重置游戏数据
-    this.setData({
-      score: 0,
-      snakeLength: 3,
-      rank: 1,
-      onlinePlayers: 0,
-      isPaused: false,
-      isGameOver: false,
-      giftCount: 0,
-      blackHoleCount: 0
-    })
+        // 开始渲染
+        this.render()
+      })
   },
 
   connectWebSocket() {
-    // 模拟WebSocket连接
-    // 实际项目中需要连接真实的WebSocket服务器
-    console.log('连接WebSocket服务器...')
+    Logger.network('连接', app.globalData.serverUrl)
+    this.socket = wx.connectSocket({
+      url: app.globalData.serverUrl,
+      success: () => {
+        Logger.network('连接成功', app.globalData.serverUrl)
+      },
+      fail: (err) => {
+        Logger.appError(err, 'WebSocket连接失败')
+      }
+    })
 
-    // 模拟接收其他玩家数据
-    this.simulateOtherPlayers()
+    wx.onSocketOpen(() => {
+      Logger.network('连接已打开', app.globalData.serverUrl)
+      this.sendGameState()
+    })
+
+    wx.onSocketMessage((res) => {
+      try {
+        const data = JSON.parse(res.data)
+        this.handleSocketMessage(data)
+      } catch (error) {
+        Logger.appError(error, '解析WebSocket消息失败')
+      }
+    })
+
+    wx.onSocketError((err) => {
+      Logger.appError(err, 'WebSocket错误')
+    })
+
+    wx.onSocketClose(() => {
+      Logger.network('连接已关闭', app.globalData.serverUrl)
+    })
   },
 
-  simulateOtherPlayers() {
-    // 模拟其他玩家数据
-    setInterval(() => {
-      const playerCount = Math.floor(Math.random() * 10) + 5
-      this.otherPlayers = []
-
-      for (let i = 0; i < playerCount; i++) {
-        this.otherPlayers.push({
-          id: `player_${i}`,
-          name: `玩家${i + 1}`,
-          snake: this.generateRandomSnake(),
-          score: Math.floor(Math.random() * 5000) + 100,
-          color: this.getRandomColor()
-        })
+  sendGameState() {
+    if (this.socket) {
+      const gameState = {
+        type: 'gameState',
+        snake: this.snake,
+        direction: this.direction,
+        score: this.data.score,
+        position: { x: this.snake[0].x, y: this.snake[0].y }
       }
 
-      // 更新在线玩家数量
-      this.setData({
-        onlinePlayers: playerCount + 1
+      wx.sendSocketMessage({
+        data: JSON.stringify(gameState)
       })
-
-      // 更新排行榜
-      this.updateRanking()
-    }, 2000)
+    }
   },
 
-  generateRandomSnake() {
-    const snake = []
-    const startX =
-      Math.floor(
-        Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
-      ) * this.gameConfig.gridSize
-    const startY =
-      Math.floor(
-        Math.random() *
-          (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
-      ) * this.gameConfig.gridSize
-    const length = Math.floor(Math.random() * 5) + 3
+  handleSocketMessage(data) {
+    switch (data.type) {
+      case 'playerList':
+        this.setData({
+          onlinePlayers: data.players.length
+        })
+        break
+      case 'gameState':
+        this.updateOtherPlayers(data.players)
+        break
+      case 'ranking':
+        this.setData({
+          rankingList: data.ranking
+        })
+        break
+      default:
+        Logger.debug('未知消息类型:', data.type)
+    }
+  },
 
-    for (let i = 0; i < length; i++) {
-      snake.push({
-        x: startX - i * this.gameConfig.gridSize,
-        y: startY
+  updateOtherPlayers(players) {
+    this.otherPlayers = players.filter(
+      (player) => player.id !== this.data.userId
+    )
+  },
+
+  startGame() {
+    Logger.gameState('开始')
+    this.gameStartTime = Date.now()
+    this.gameLoop = setInterval(() => {
+      this.updateGame()
+    }, this.gameConfig.gameSpeed)
+
+    this.gameTimer = setInterval(() => {
+      this.updateGameTime()
+    }, 1000)
+
+    this.setData({
+      isPaused: false,
+      isGameOver: false
+    })
+  },
+
+  pauseGame() {
+    Logger.gameState('暂停')
+    if (this.gameLoop) {
+      clearInterval(this.gameLoop)
+      this.gameLoop = null
+    }
+    if (this.gameTimer) {
+      clearInterval(this.gameTimer)
+      this.gameTimer = null
+    }
+
+    this.setData({
+      isPaused: true
+    })
+  },
+
+  resumeGame() {
+    Logger.gameState('恢复')
+    this.startGame()
+  },
+
+  gameOver() {
+    Logger.gameState('结束', `得分: ${this.data.score}`)
+    this.pauseGame()
+
+    this.setData({
+      isGameOver: true
+    })
+
+    // 发送游戏结束消息
+    if (this.socket) {
+      wx.sendSocketMessage({
+        data: JSON.stringify({
+          type: 'gameOver',
+          score: this.data.score
+        })
       })
     }
 
-    return snake
-  },
-
-  getRandomColor() {
-    const colors = [
-      '#e74c3c',
-      '#3498db',
-      '#2ecc71',
-      '#f39c12',
-      '#9b59b6',
-      '#1abc9c'
-    ]
-    return colors[Math.floor(Math.random() * colors.length)]
-  },
-
-  startGameLoop() {
-    this.gameLoop = setInterval(() => {
-      if (!this.data.isPaused && !this.data.isGameOver) {
-        this.updateGame()
-        this.renderGame()
+    // 显示游戏结束对话框
+    wx.showModal({
+      title: '游戏结束',
+      content: `您的得分: ${this.data.score}\n是否重新开始？`,
+      confirmText: '重新开始',
+      cancelText: '返回首页',
+      success: (res) => {
+        if (res.confirm) {
+          this.restartGame()
+        } else {
+          wx.navigateBack()
+        }
       }
-    }, this.gameConfig.gameSpeed)
+    })
+  },
+
+  restartGame() {
+    Logger.gameState('重新开始')
+    // 重置游戏状态
+    this.snake = [
+      { x: 400, y: 300 },
+      { x: 380, y: 300 },
+      { x: 360, y: 300 }
+    ]
+    this.direction = 'right'
+    this.nextDirection = 'right'
+    this.food = []
+    this.gifts = []
+    this.blackHoles = []
+    this.otherPlayers = []
+
+    this.setData({
+      score: 0,
+      snakeLength: 3,
+      isGameOver: false,
+      gameTime: '00:00'
+    })
+
+    this.generateFood()
+    this.startGame()
   },
 
   updateGame() {
-    // 更新蛇的方向
-    this.direction = this.nextDirection
-
-    // 移动蛇
     this.moveSnake()
-
-    // 检查碰撞
-    if (this.checkCollision()) {
-      this.gameOver()
-      return
-    }
-
-    // 检查是否吃到食物
+    this.checkCollision()
     this.checkFoodCollision()
-
-    // 检查是否吃到礼包
     this.checkGiftCollision()
-
-    // 检查是否碰到黑洞
     this.checkBlackHoleCollision()
-
-    // 发送位置更新到服务器
-    this.sendPositionUpdate()
+    this.spawnGift()
+    this.spawnBlackHole()
+    this.render()
+    this.sendGameState()
   },
 
   moveSnake() {
     const head = { ...this.snake[0] }
+    this.direction = this.nextDirection
 
-    // 根据方向移动蛇头
     switch (this.direction) {
       case 'up':
         head.y -= this.gameConfig.gridSize
@@ -284,346 +327,268 @@ Page({
         break
     }
 
-    // 边界检查（允许穿墙）
+    // 穿墙逻辑
     if (head.x < 0) {
       head.x = this.gameConfig.canvasWidth - this.gameConfig.gridSize
+    } else if (head.x >= this.gameConfig.canvasWidth) {
+      head.x = 0
     }
-    if (head.x >= this.gameConfig.canvasWidth) head.x = 0
+
     if (head.y < 0) {
       head.y = this.gameConfig.canvasHeight - this.gameConfig.gridSize
+    } else if (head.y >= this.gameConfig.canvasHeight) {
+      head.y = 0
     }
-    if (head.y >= this.gameConfig.canvasHeight) head.y = 0
 
-    // 在蛇头前添加新位置
     this.snake.unshift(head)
-
-    // 移除蛇尾（除非吃到食物）
-    if (!this.checkFoodCollision()) {
-      this.snake.pop()
-    }
+    this.snake.pop()
   },
 
   checkCollision() {
     const head = this.snake[0]
 
-    // 检查是否撞到自己
+    // 检查与蛇身的碰撞
     for (let i = 1; i < this.snake.length; i++) {
       if (head.x === this.snake[i].x && head.y === this.snake[i].y) {
-        return true
+        this.gameOver()
+        return
       }
     }
 
-    // 检查是否撞到其他玩家
+    // 检查与其他玩家的碰撞
     for (const player of this.otherPlayers) {
       for (const segment of player.snake) {
         if (head.x === segment.x && head.y === segment.y) {
-          return true
+          this.gameOver()
+          return
         }
       }
     }
-
-    return false
   },
 
   checkFoodCollision() {
     const head = this.snake[0]
+    const foodIndex = this.food.findIndex(
+      (item) => item.x === head.x && item.y === head.y
+    )
 
-    for (let i = 0; i < this.food.length; i++) {
-      if (head.x === this.food[i].x && head.y === this.food[i].y) {
-        // 吃到食物
-        this.food.splice(i, 1)
-        this.addScore(100)
-        this.setData({
-          snakeLength: this.snake.length
-        })
-
-        // 生成新食物
-        this.generateFood()
-        return true
-      }
+    if (foodIndex !== -1) {
+      // 吃食物
+      this.food.splice(foodIndex, 1)
+      this.addScore(100)
+      this.growSnake()
+      this.generateFood()
     }
-
-    return false
   },
 
   checkGiftCollision() {
     const head = this.snake[0]
+    const giftIndex = this.gifts.findIndex(
+      (gift) => gift.x === head.x && gift.y === head.y
+    )
 
-    for (let i = 0; i < this.gifts.length; i++) {
-      if (head.x === this.gifts[i].x && head.y === this.gifts[i].y) {
-        // 吃到礼包
-        const gift = this.gifts.splice(i, 1)[0]
-        this.addScore(gift.points)
-
-        // 应用礼包效果
-        this.applyGiftEffect(gift.type)
-
-        this.setData({
-          giftCount: this.gifts.length
-        })
-        return true
-      }
+    if (giftIndex !== -1) {
+      const gift = this.gifts[giftIndex]
+      this.gifts.splice(giftIndex, 1)
+      this.addScore(gift.points)
+      this.applyGiftEffect(gift)
     }
-
-    return false
   },
 
   checkBlackHoleCollision() {
     const head = this.snake[0]
+    const blackHoleIndex = this.blackHoles.findIndex(
+      (blackHole) => blackHole.x === head.x && blackHole.y === head.y
+    )
 
-    for (let i = 0; i < this.blackHoles.length; i++) {
-      if (head.x === this.blackHoles[i].x && head.y === this.blackHoles[i].y) {
-        // 碰到黑洞
-        this.gameOver()
-        return true
-      }
+    if (blackHoleIndex !== -1) {
+      this.blackHoles.splice(blackHoleIndex, 1)
+      this.gameOver()
     }
+  },
 
-    return false
+  addScore(points) {
+    const newScore = this.data.score + points
+    this.setData({
+      score: newScore
+    })
+  },
+
+  growSnake() {
+    const tail = { ...this.snake[this.snake.length - 1] }
+    this.snake.push(tail)
+    this.setData({
+      snakeLength: this.snake.length
+    })
   },
 
   generateFood() {
-    while (this.food.length < 5) {
-      const food = {
-        x:
-          Math.floor(
-            Math.random() *
-              (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
-          ) * this.gameConfig.gridSize,
-        y:
-          Math.floor(
-            Math.random() *
-              (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
-          ) * this.gameConfig.gridSize
-      }
-
-      // 检查是否与蛇身重叠
-      let overlap = false
-      for (const segment of this.snake) {
-        if (food.x === segment.x && food.y === segment.y) {
-          overlap = true
-          break
-        }
-      }
-
-      if (!overlap) {
-        this.food.push(food)
-      }
+    if (this.food.length < 5) {
+      const food = this.getRandomPosition()
+      this.food.push(food)
     }
-  },
-
-  startSpawnTimers() {
-    // 礼包生成定时器
-    setInterval(() => {
-      if (this.gifts.length < this.gameConfig.maxGifts) {
-        this.spawnGift()
-      }
-    }, this.gameConfig.giftSpawnInterval)
-
-    // 黑洞生成定时器
-    setInterval(() => {
-      if (this.blackHoles.length < this.gameConfig.maxBlackHoles) {
-        this.spawnBlackHole()
-      }
-    }, this.gameConfig.blackHoleSpawnInterval)
   },
 
   spawnGift() {
-    const gift = {
-      x:
-        Math.floor(
-          Math.random() *
-            (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
-        ) * this.gameConfig.gridSize,
-      y:
-        Math.floor(
-          Math.random() *
-            (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
-        ) * this.gameConfig.gridSize,
-      type: ['speed', 'shield', 'teleport', 'points'][
-        Math.floor(Math.random() * 4)
-      ],
-      points: Math.floor(Math.random() * 500) + 200
+    if (this.gifts.length < this.gameConfig.maxGifts) {
+      const now = Date.now()
+      if (
+        !this.lastGiftSpawn ||
+        now - this.lastGiftSpawn > this.gameConfig.giftSpawnInterval
+      ) {
+        const gift = {
+          ...this.getRandomPosition(),
+          type: this.getRandomGiftType(),
+          points: Math.floor(Math.random() * 500) + 100
+        }
+        this.gifts.push(gift)
+        this.lastGiftSpawn = now
+        this.setData({
+          giftCount: this.gifts.length
+        })
+      }
     }
-
-    this.gifts.push(gift)
-    this.setData({
-      giftCount: this.gifts.length
-    })
   },
 
   spawnBlackHole() {
-    const blackHole = {
-      x:
-        Math.floor(
-          Math.random() *
-            (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
-        ) * this.gameConfig.gridSize,
-      y:
-        Math.floor(
-          Math.random() *
-            (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
-        ) * this.gameConfig.gridSize
+    if (this.blackHoles.length < this.gameConfig.maxBlackHoles) {
+      const now = Date.now()
+      if (
+        !this.lastBlackHoleSpawn ||
+        now - this.lastBlackHoleSpawn > this.gameConfig.blackHoleSpawnInterval
+      ) {
+        const blackHole = this.getRandomPosition()
+        this.blackHoles.push(blackHole)
+        this.lastBlackHoleSpawn = now
+        this.setData({
+          blackHoleCount: this.blackHoles.length
+        })
+      }
     }
-
-    this.blackHoles.push(blackHole)
-    this.setData({
-      blackHoleCount: this.blackHoles.length
-    })
   },
 
-  applyGiftEffect(type) {
-    switch (type) {
+  getRandomPosition() {
+    const maxX = Math.floor(
+      this.gameConfig.canvasWidth / this.gameConfig.gridSize
+    )
+    const maxY = Math.floor(
+      this.gameConfig.canvasHeight / this.gameConfig.gridSize
+    )
+    return {
+      x: Math.floor(Math.random() * maxX) * this.gameConfig.gridSize,
+      y: Math.floor(Math.random() * maxY) * this.gameConfig.gridSize
+    }
+  },
+
+  getRandomGiftType() {
+    const types = ['speed', 'shield', 'teleport', 'double']
+    return types[Math.floor(Math.random() * types.length)]
+  },
+
+  applyGiftEffect(gift) {
+    let newPos
+    switch (gift.type) {
       case 'speed':
-        // 临时加速
-        this.temporarySpeedBoost()
+        Logger.gameState('护盾激活')
+        // 临时提升速度
+        this.gameConfig.gameSpeed = Math.max(50, this.gameConfig.gameSpeed / 2)
+        setTimeout(() => {
+          this.gameConfig.gameSpeed = 150
+        }, 5000)
         break
       case 'shield':
-        // 临时护盾
-        this.temporaryShield()
+        // 临时无敌
+        this.hasShield = true
+        setTimeout(() => {
+          this.hasShield = false
+        }, 3000)
         break
       case 'teleport':
         // 随机传送
-        this.randomTeleport()
+        newPos = this.getRandomPosition()
+        this.snake[0] = newPos
         break
-      case 'points':
-        // 额外分数已在checkGiftCollision中处理
+      case 'double':
+        // 双倍得分
+        this.doubleScore = true
+        setTimeout(() => {
+          this.doubleScore = false
+        }, 10000)
         break
     }
   },
 
-  temporarySpeedBoost() {
-    const originalSpeed = this.gameConfig.gameSpeed
-    this.gameConfig.gameSpeed = originalSpeed / 2
+  updateGameTime() {
+    const elapsed = Math.floor((Date.now() - this.gameStartTime) / 1000)
+    const minutes = Math.floor(elapsed / 60)
+    const seconds = elapsed % 60
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 
-    setTimeout(() => {
-      this.gameConfig.gameSpeed = originalSpeed
-    }, 5000)
+    this.setData({
+      gameTime: timeString
+    })
   },
 
-  temporaryShield() {
-    // 实现护盾效果
-    console.log('护盾激活')
-  },
-
-  randomTeleport() {
-    const head = this.snake[0]
-    head.x =
-      Math.floor(
-        Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
-      ) * this.gameConfig.gridSize
-    head.y =
-      Math.floor(
-        Math.random() *
-          (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
-      ) * this.gameConfig.gridSize
-  },
-
-  renderGame() {
-    // 清空画布
-    this.ctx.setFillStyle('#2c3e50')
-    this.ctx.fillRect(
-      0,
-      0,
-      this.gameConfig.canvasWidth,
-      this.gameConfig.canvasHeight
-    )
-
-    // 绘制网格
-    this.drawGrid()
-
-    // 绘制食物
-    this.drawFood()
-
-    // 绘制礼包
-    this.drawGifts()
-
-    // 绘制黑洞
-    this.drawBlackHoles()
-
-    // 绘制其他玩家
-    this.drawOtherPlayers()
-
-    // 绘制自己的蛇
-    this.drawSnake()
-
-    // 更新画布
-    this.ctx.draw()
-  },
-
-  drawGrid() {
-    this.ctx.setStrokeStyle('#34495e')
-    this.ctx.setLineWidth(1)
-
-    for (
-      let x = 0;
-      x <= this.gameConfig.canvasWidth;
-      x += this.gameConfig.gridSize
-    ) {
-      this.ctx.beginPath()
-      this.ctx.moveTo(x, 0)
-      this.ctx.lineTo(x, this.gameConfig.canvasHeight)
-      this.ctx.stroke()
-    }
-
-    for (
-      let y = 0;
-      y <= this.gameConfig.canvasHeight;
-      y += this.gameConfig.gridSize
-    ) {
-      this.ctx.beginPath()
-      this.ctx.moveTo(0, y)
-      this.ctx.lineTo(this.gameConfig.canvasWidth, y)
-      this.ctx.stroke()
-    }
-  },
-
-  drawFood() {
-    this.ctx.setFillStyle('#e74c3c')
-    for (const food of this.food) {
+  // 绘制蛇的辅助函数
+  drawSnake() {
+    this.ctx.fillStyle = '#4CAF50'
+    for (const segment of this.snake) {
       this.ctx.fillRect(
-        food.x + 2,
-        food.y + 2,
-        this.gameConfig.gridSize - 4,
-        this.gameConfig.gridSize - 4
-      )
-    }
-  },
-
-  drawGifts() {
-    this.ctx.setFillStyle('#f39c12')
-    for (const gift of this.gifts) {
-      this.ctx.fillRect(
-        gift.x + 1,
-        gift.y + 1,
+        segment.x,
+        segment.y,
         this.gameConfig.gridSize - 2,
         this.gameConfig.gridSize - 2
       )
     }
   },
 
-  drawBlackHoles() {
-    this.ctx.setFillStyle('#000000')
-    for (const blackHole of this.blackHoles) {
-      this.ctx.beginPath()
-      this.ctx.arc(
-        blackHole.x + this.gameConfig.gridSize / 2,
-        blackHole.y + this.gameConfig.gridSize / 2,
-        this.gameConfig.gridSize / 2,
-        0,
-        2 * Math.PI
+  // 绘制食物的辅助函数
+  drawFood() {
+    this.ctx.fillStyle = '#FF5722'
+    for (const food of this.food) {
+      this.ctx.fillRect(
+        food.x,
+        food.y,
+        this.gameConfig.gridSize - 2,
+        this.gameConfig.gridSize - 2
       )
-      this.ctx.fill()
     }
   },
 
+  // 绘制礼包的辅助函数
+  drawGifts() {
+    this.ctx.fillStyle = '#FFC107'
+    for (const gift of this.gifts) {
+      this.ctx.fillRect(
+        gift.x,
+        gift.y,
+        this.gameConfig.gridSize - 2,
+        this.gameConfig.gridSize - 2
+      )
+    }
+  },
+
+  // 绘制黑洞的辅助函数
+  drawBlackHoles() {
+    this.ctx.fillStyle = '#000000'
+    for (const blackHole of this.blackHoles) {
+      this.ctx.fillRect(
+        blackHole.x,
+        blackHole.y,
+        this.gameConfig.gridSize - 2,
+        this.gameConfig.gridSize - 2
+      )
+    }
+  },
+
+  // 绘制其他玩家的辅助函数
   drawOtherPlayers() {
+    this.ctx.fillStyle = '#2196F3'
     for (const player of this.otherPlayers) {
-      this.ctx.setFillStyle(player.color)
       for (const segment of player.snake) {
         this.ctx.fillRect(
-          segment.x + 1,
-          segment.y + 1,
+          segment.x,
+          segment.y,
           this.gameConfig.gridSize - 2,
           this.gameConfig.gridSize - 2
         )
@@ -631,61 +596,59 @@ Page({
     }
   },
 
-  drawSnake() {
-    // 绘制蛇身
-    this.ctx.setFillStyle('#2ecc71')
-    for (let i = 1; i < this.snake.length; i++) {
-      this.ctx.fillRect(
-        this.snake[i].x + 1,
-        this.snake[i].y + 1,
-        this.gameConfig.gridSize - 2,
-        this.gameConfig.gridSize - 2
-      )
-    }
+  render() {
+    if (!this.ctx) return
 
-    // 绘制蛇头
-    this.ctx.setFillStyle('#27ae60')
-    this.ctx.fillRect(
-      this.snake[0].x + 1,
-      this.snake[0].y + 1,
-      this.gameConfig.gridSize - 2,
-      this.gameConfig.gridSize - 2
+    // 清空画布
+    this.ctx.clearRect(
+      0,
+      0,
+      this.gameConfig.canvasWidth,
+      this.gameConfig.canvasHeight
     )
+
+    // 绘制背景
+    this.ctx.fillStyle = '#f0f0f0'
+    this.ctx.fillRect(
+      0,
+      0,
+      this.gameConfig.canvasWidth,
+      this.gameConfig.canvasHeight
+    )
+
+    // 绘制游戏元素
+    this.drawSnake()
+    this.drawFood()
+    this.drawGifts()
+    this.drawBlackHoles()
+    this.drawOtherPlayers()
   },
 
-  // 控制方法
-  moveUp() {
-    if (this.direction !== 'down') {
-      this.nextDirection = 'up'
-    }
-  },
-
-  moveDown() {
-    if (this.direction !== 'up') {
-      this.nextDirection = 'down'
-    }
-  },
-
-  moveLeft() {
-    if (this.direction !== 'right') {
-      this.nextDirection = 'left'
-    }
-  },
-
-  moveRight() {
-    if (this.direction !== 'left') {
-      this.nextDirection = 'right'
-    }
-  },
-
-  // 触摸控制
   onTouchStart(e) {
     this.touchStartX = e.touches[0].clientX
     this.touchStartY = e.touches[0].clientY
   },
 
-  onTouchMove(e) {
-    e.preventDefault()
+  // 处理水平滑动的辅助函数
+  handleHorizontalSwipe(deltaX, minSwipeDistance) {
+    if (Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0 && this.direction !== 'left') {
+        this.nextDirection = 'right'
+      } else if (deltaX < 0 && this.direction !== 'right') {
+        this.nextDirection = 'left'
+      }
+    }
+  },
+
+  // 处理垂直滑动的辅助函数
+  handleVerticalSwipe(deltaY, minSwipeDistance) {
+    if (Math.abs(deltaY) > minSwipeDistance) {
+      if (deltaY > 0 && this.direction !== 'up') {
+        this.nextDirection = 'down'
+      } else if (deltaY < 0 && this.direction !== 'down') {
+        this.nextDirection = 'up'
+      }
+    }
   },
 
   onTouchEnd(e) {
@@ -695,85 +658,23 @@ Page({
     const deltaX = touchEndX - this.touchStartX
     const deltaY = touchEndY - this.touchStartY
 
-    // 判断滑动方向
+    const minSwipeDistance = 30
+
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // 水平滑动
-      if (deltaX > 0) {
-        this.moveRight()
-      } else {
-        this.moveLeft()
-      }
+      this.handleHorizontalSwipe(deltaX, minSwipeDistance)
     } else {
-      // 垂直滑动
-      if (deltaY > 0) {
-        this.moveDown()
-      } else {
-        this.moveUp()
-      }
+      this.handleVerticalSwipe(deltaY, minSwipeDistance)
     }
   },
 
-  // 游戏控制
-  pauseGame() {
-    this.setData({
-      isPaused: true
-    })
-  },
-
-  resumeGame() {
-    this.setData({
-      isPaused: false
-    })
-  },
-
-  gameOver() {
-    this.setData({
-      isGameOver: true
-    })
-
-    // 停止游戏循环
-    if (this.gameLoop) {
-      clearInterval(this.gameLoop)
-      this.gameLoop = null
+  togglePause() {
+    if (this.data.isPaused) {
+      this.resumeGame()
+    } else {
+      this.pauseGame()
     }
-
-    // 发送游戏结果到服务器
-    this.sendGameResult()
   },
 
-  restartGame() {
-    this.cleanup()
-    this.initGame()
-  },
-
-  quitGame() {
-    this.cleanup()
-    wx.switchTab({
-      url: '/pages/index/index'
-    })
-  },
-
-  backToHome() {
-    this.cleanup()
-    wx.switchTab({
-      url: '/pages/index/index'
-    })
-  },
-
-  // 功能按钮
-  useSpeedBoost() {
-    this.temporarySpeedBoost()
-  },
-
-  useShield() {
-    this.temporaryShield()
-  },
-
-  useTeleport() {
-    this.randomTeleport()
-  },
-
-  // 排行榜
   toggleRanking() {
     this.setData({
       showRanking: !this.data.showRanking
@@ -781,95 +682,44 @@ Page({
   },
 
   updateRanking() {
-    const allPlayers = [
-      {
-        id: 'current_player',
-        name: app.globalData.userInfo ? app.globalData.userInfo.nickName : '我',
-        score: this.data.score
-      },
-      ...this.otherPlayers.map(player => ({
-        id: player.id,
-        name: player.name,
-        score: player.score
-      }))
-    ]
-
-    // 按分数排序
-    allPlayers.sort((a, b) => b.score - a.score)
-
-    // 添加排名
-    const rankingList = allPlayers.map((player, index) => ({
-      ...player,
-      rank: index + 1
-    }))
-
-    this.setData({
-      rankingList: rankingList.slice(0, 10) // 只显示前10名
-    })
-
-    // 更新自己的排名
-    const currentPlayer = rankingList.find(
-      player => player.id === 'current_player'
-    )
-    if (currentPlayer) {
-      this.setData({
-        rank: currentPlayer.rank
+    // 更新排行榜数据
+    if (this.socket) {
+      wx.sendSocketMessage({
+        data: JSON.stringify({
+          type: 'getRanking'
+        })
       })
     }
   },
 
-  // 聊天功能
-  openChat() {
-    wx.showToast({
-      title: '聊天功能开发中',
-      icon: 'none'
-    })
-  },
-
-  // 工具方法
-  addScore(points) {
-    this.setData({
-      score: this.data.score + points
-    })
-  },
-
-  startGameTimer() {
-    this.gameStartTime = Date.now()
-    this.gameTimer = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - this.gameStartTime) / 1000)
-      const minutes = Math.floor(elapsed / 60)
-      const seconds = elapsed % 60
-      this.setData({
-        gameTime: `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      })
-    }, 1000)
-  },
-
-  sendPositionUpdate() {
-    // 发送位置更新到服务器
-    // 实际项目中需要实现WebSocket发送
-  },
-
-  sendGameResult() {
-    // 发送游戏结果到服务器
-    // 实际项目中需要实现WebSocket发送
-  },
-
   cleanup() {
-    // 清理资源
+    Logger.gameState('清理资源')
     if (this.gameLoop) {
       clearInterval(this.gameLoop)
       this.gameLoop = null
     }
-
     if (this.gameTimer) {
       clearInterval(this.gameTimer)
       this.gameTimer = null
     }
-
     if (this.socket) {
-      this.socket.close()
+      wx.closeSocket()
       this.socket = null
+    }
+  },
+
+  onShareAppMessage() {
+    return {
+      title: `🐍 我在贪食蛇大战中获得了${this.data.score}分！`,
+      path: '/pages/index/index',
+      imageUrl: '/images/share-game.png'
+    }
+  },
+
+  onShareTimeline() {
+    return {
+      title: `🐍 我在贪食蛇大战中获得了${this.data.score}分！`,
+      imageUrl: '/images/share-game.png'
     }
   }
 })

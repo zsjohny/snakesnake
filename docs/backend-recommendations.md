@@ -504,17 +504,17 @@ socket.emit('collectGift', {
 
 ```javascript
 // 游戏状态更新
-socket.on('gameStateUpdate', data => {
+socket.on('gameStateUpdate', (data) => {
   // 更新游戏画面
 })
 
 // 玩家加入/离开
-socket.on('playerJoined', player => {
+socket.on('playerJoined', (player) => {
   // 显示新玩家
 })
 
 // 游戏结束
-socket.on('gameEnd', result => {
+socket.on('gameEnd', (result) => {
   // 显示游戏结果
 })
 ```

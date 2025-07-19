@@ -5,7 +5,10 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: ['standard'],
+  extends: [
+    'standard',
+    'prettier'
+  ],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module'
@@ -13,7 +16,7 @@ module.exports = {
   plugins: ['jest'],
   rules: {
     'no-console': 'warn',
-    complexity: ['warn', 10],
+    'complexity': ['warn', 10],
     'max-depth': ['warn', 4],
     'max-lines-per-function': ['warn', 50],
     'max-params': ['warn', 5]
@@ -31,7 +34,13 @@ module.exports = {
       files: ['tests/**/*.js', '**/*.test.js', '**/*.spec.js'],
       rules: {
         'max-lines-per-function': ['warn', 100],
-        complexity: ['warn', 15]
+        'complexity': ['warn', 15]
+      }
+    },
+    {
+      files: ['utils/logger.js'],
+      rules: {
+        'no-console': 'off'
       }
     }
   ]

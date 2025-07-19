@@ -222,7 +222,7 @@ describe('游戏碰撞检测测试', () => {
       }
 
       const collision = otherPlayer.snake.some(
-        segment => head.x === segment.x && head.y === segment.y
+        (segment) => head.x === segment.x && head.y === segment.y
       )
 
       expect(collision).toBe(true)
@@ -236,7 +236,7 @@ describe('游戏碰撞检测测试', () => {
       ]
 
       const collision = food.some(
-        item => head.x === item.x && head.y === item.y
+        (item) => head.x === item.x && head.y === item.y
       )
 
       expect(collision).toBe(true)
@@ -250,7 +250,7 @@ describe('游戏碰撞检测测试', () => {
       ]
 
       const collision = gifts.some(
-        gift => head.x === gift.x && head.y === gift.y
+        (gift) => head.x === gift.x && head.y === gift.y
       )
 
       expect(collision).toBe(true)
@@ -264,7 +264,7 @@ describe('游戏碰撞检测测试', () => {
       ]
 
       const collision = blackHoles.some(
-        blackHole => head.x === blackHole.x && head.y === blackHole.y
+        (blackHole) => head.x === blackHole.x && head.y === blackHole.y
       )
 
       expect(collision).toBe(true)

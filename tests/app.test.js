@@ -133,8 +133,8 @@ describe('App 配置功能测试', () => {
     appInstance.initGameConfig()
 
     // 验证配置是否被调整
-    expect(appInstance.globalData.gameConfig.canvasWidth).toBeCloseTo(372.6) // 414 * 0.9
-    expect(appInstance.globalData.gameConfig.canvasHeight).toBeCloseTo(627.2) // 896 * 0.7
+    expect(appInstance.globalData.gameConfig.canvasWidth).toBe(372) // 414 * 0.9
+    expect(appInstance.globalData.gameConfig.canvasHeight).toBe(627) // 896 * 0.7
   })
 
   test('checkUpdate应该正确处理更新', () => {
@@ -152,15 +152,6 @@ describe('App 配置功能测试', () => {
     expect(wx.getUpdateManager).toHaveBeenCalled()
     expect(mockUpdateManager.onCheckForUpdate).toHaveBeenCalled()
   })
-})
-
-describe('App 用户功能测试', () => {
-  let appInstance
-
-  beforeEach(() => {
-    resetTestEnvironment()
-    appInstance = getAppInstance()
-  })
 
   test('getUserInfo应该正确处理用户信息', () => {
     const mockUserInfo = {
@@ -168,7 +159,7 @@ describe('App 用户功能测试', () => {
       avatarUrl: 'https://example.com/avatar.jpg'
     }
 
-    wx.getSetting.mockImplementation(options => {
+    wx.getSetting.mockImplementation((options) => {
       options.success({
         authSetting: {
           'scope.userInfo': true
@@ -176,7 +167,7 @@ describe('App 用户功能测试', () => {
       })
     })
 
-    wx.getUserInfo.mockImplementation(options => {
+    wx.getUserInfo.mockImplementation((options) => {
       options.success({
         userInfo: mockUserInfo
       })
@@ -186,15 +177,6 @@ describe('App 用户功能测试', () => {
 
     expect(wx.getSetting).toHaveBeenCalled()
   })
-})
-
-describe('App 错误处理测试', () => {
-  let appInstance
-
-  beforeEach(() => {
-    resetTestEnvironment()
-    appInstance = getAppInstance()
-  })
 
   test('onError应该正确处理错误', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
@@ -202,7 +184,7 @@ describe('App 错误处理测试', () => {
 
     appInstance.onError(errorMessage)
 
-    expect(consoleSpy).toHaveBeenCalledWith('小程序错误:', errorMessage)
+    expect(consoleSpy).toHaveBeenCalledWith('[ERROR] 小程序错误:', errorMessage)
 
     consoleSpy.mockRestore()
   })
@@ -216,7 +198,7 @@ describe('App 错误处理测试', () => {
     })
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      '未处理的Promise拒绝:',
+      '[ERROR] 小程序错误 (Promise拒绝):',
       rejectionReason
     )
 

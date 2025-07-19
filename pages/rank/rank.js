@@ -1,8 +1,9 @@
+// rank.js
 const app = getApp()
+const Logger = require('../../utils/logger')
 
 Page({
   data: {
-    // 我的排名信息
     myRank: 1,
     myScore: 0,
     userInfo: null,
@@ -20,7 +21,7 @@ Page({
   },
 
   onLoad() {
-    console.log('排行榜页面加载')
+    Logger.pageLoad('排行榜')
     this.loadUserInfo()
     this.loadMyRanking()
     this.loadRankingList()
