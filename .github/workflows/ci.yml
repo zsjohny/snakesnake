@@ -194,7 +194,7 @@ jobs:
 
       - name: Create production release
         id: create_release
-        uses: actions/create-release@v2
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -225,7 +225,7 @@ jobs:
           zip -r dist/snakesnake.zip . -x "node_modules/*" ".git/*" "tests/*" "docs/*" "images/*" ".github/*" "*.md" "docker-compose.yml" "Dockerfile"
 
       - name: Upload release assets
-        uses: actions/upload-release-asset@v2
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
