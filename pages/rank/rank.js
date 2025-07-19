@@ -85,15 +85,31 @@ Page({
   generateMockRankingData () {
     const data = []
     const names = [
-      '王者归来', '蛇王', '贪吃蛇大师', '速度之王', '技巧达人',
-      '游戏高手', '蛇神', '无敌玩家', '超级玩家', '游戏达人',
-      '蛇王之王', '速度之神', '技巧大师', '游戏王者', '蛇神之王'
+      '王者归来',
+      '蛇王',
+      '贪吃蛇大师',
+      '速度之王',
+      '技巧达人',
+      '游戏高手',
+      '蛇神',
+      '无敌玩家',
+      '超级玩家',
+      '游戏达人',
+      '蛇王之王',
+      '速度之神',
+      '技巧大师',
+      '游戏王者',
+      '蛇神之王'
     ]
 
     for (let i = 0; i < this.data.pageSize; i++) {
       const score = Math.floor(Math.random() * 20000) + 1000
       const snakeLength = Math.floor(Math.random() * 50) + 10
-      const gameTime = `${Math.floor(Math.random() * 10)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`
+      const gameTime = `${Math.floor(Math.random() * 10)}:${Math.floor(
+        Math.random() * 60
+      )
+        .toString()
+        .padStart(2, '0')}`
 
       data.push({
         id: `player_${i}`,

@@ -135,7 +135,7 @@ describe('App 全局配置测试', () => {
       avatarUrl: 'https://example.com/avatar.jpg'
     }
 
-    wx.getSetting.mockImplementation((options) => {
+    wx.getSetting.mockImplementation(options => {
       options.success({
         authSetting: {
           'scope.userInfo': true
@@ -143,7 +143,7 @@ describe('App 全局配置测试', () => {
       })
     })
 
-    wx.getUserInfo.mockImplementation((options) => {
+    wx.getUserInfo.mockImplementation(options => {
       options.success({
         userInfo: mockUserInfo
       })
@@ -173,7 +173,10 @@ describe('App 全局配置测试', () => {
       reason: rejectionReason
     })
 
-    expect(consoleSpy).toHaveBeenCalledWith('未处理的Promise拒绝:', rejectionReason)
+    expect(consoleSpy).toHaveBeenCalledWith(
+      '未处理的Promise拒绝:',
+      rejectionReason
+    )
 
     consoleSpy.mockRestore()
   })

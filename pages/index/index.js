@@ -47,7 +47,7 @@ Page({
       // 如果没有用户信息，尝试获取
       wx.getUserProfile({
         desc: '用于完善用户资料',
-        success: (res) => {
+        success: res => {
           app.globalData.userInfo = res.userInfo
           this.setData({
             userInfo: res.userInfo
@@ -132,7 +132,7 @@ Page({
       wx.showModal({
         title: '提示',
         content: '需要获取您的用户信息才能开始游戏',
-        success: (res) => {
+        success: res => {
           if (res.confirm) {
             this.loadUserInfo()
           }
@@ -147,7 +147,7 @@ Page({
       success: () => {
         console.log('跳转到游戏页面成功')
       },
-      fail: (err) => {
+      fail: err => {
         console.error('跳转到游戏页面失败:', err)
         wx.showToast({
           title: '跳转失败',
@@ -168,7 +168,8 @@ Page({
     console.log('查看教程')
     wx.showModal({
       title: '游戏教程',
-      content: '1. 使用方向键或滑动控制蛇的移动\n2. 吃掉食物可以增长身体和得分\n3. 避免撞到墙壁、其他玩家或自己的身体\n4. 收集礼包可以获得特殊效果\n5. 小心黑洞陷阱！',
+      content:
+        '1. 使用方向键或滑动控制蛇的移动\n2. 吃掉食物可以增长身体和得分\n3. 避免撞到墙壁、其他玩家或自己的身体\n4. 收集礼包可以获得特殊效果\n5. 小心黑洞陷阱！',
       showCancel: false,
       confirmText: '知道了'
     })

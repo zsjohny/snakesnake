@@ -14,23 +14,27 @@
 ### 推荐技术栈
 
 #### 1. WebSocket服务器
+
 - **Socket.IO**: 最流行的WebSocket库，支持自动重连、房间管理
 - **ws**: 轻量级WebSocket库，性能优秀
 - **Fastify**: 高性能的Web框架，内置WebSocket支持
 
 #### 2. API服务器
+
 - **Express.js**: 最流行的Node.js Web框架
 - **Koa.js**: 轻量级、现代化的Web框架
 - **Fastify**: 高性能的Web框架
 - **NestJS**: 企业级Node.js框架，支持TypeScript
 
 #### 3. 数据库
+
 - **MongoDB**: 文档型数据库，适合游戏数据存储
 - **MySQL**: 关系型数据库，成熟稳定
 - **PostgreSQL**: 功能强大的关系型数据库
 - **Redis**: 内存数据库，用于缓存和会话存储
 
 #### 4. 消息队列
+
 - **Redis Pub/Sub**: 轻量级消息队列
 - **RabbitMQ**: 功能强大的消息队列
 - **Apache Kafka**: 高吞吐量的消息队列
@@ -40,9 +44,11 @@
 ### WebSocket游戏服务器
 
 #### 1. [Socket.IO Game Server](https://github.com/socketio/socket.io-game-server)
+
 **推荐指数**: ⭐⭐⭐⭐⭐
 
 **特点**:
+
 - 基于Socket.IO的完整游戏服务器
 - 支持房间管理、玩家匹配
 - 内置断线重连机制
@@ -51,6 +57,7 @@
 **适用场景**: 多人在线游戏、实时通信
 
 **快速开始**:
+
 ```bash
 git clone https://github.com/socketio/socket.io-game-server.git
 cd socket.io-game-server
@@ -59,9 +66,11 @@ npm start
 ```
 
 #### 2. [Colyseus](https://github.com/colyseus/colyseus)
+
 **推荐指数**: ⭐⭐⭐⭐⭐
 
 **特点**:
+
 - 专门为游戏设计的实时服务器框架
 - 支持TypeScript
 - 内置房间管理、状态同步
@@ -70,6 +79,7 @@ npm start
 **适用场景**: 实时多人游戏、状态同步
 
 **快速开始**:
+
 ```bash
 npm install colyseus
 npx colyseus-app init my-game
@@ -78,9 +88,11 @@ npm start
 ```
 
 #### 3. [Pomelo](https://github.com/NetEase/pomelo)
+
 **推荐指数**: ⭐⭐⭐⭐
 
 **特点**:
+
 - 网易开源的分布式游戏服务器框架
 - 支持集群部署
 - 丰富的游戏服务器功能
@@ -91,43 +103,52 @@ npm start
 ### API服务器框架
 
 #### 1. [Express.js](https://github.com/expressjs/express)
+
 **推荐指数**: ⭐⭐⭐⭐⭐
 
 **特点**:
+
 - 最流行的Node.js Web框架
 - 丰富的中间件生态
 - 简单易学，文档完善
 - 社区活跃
 
 **快速开始**:
+
 ```bash
 npm install express
 ```
 
 #### 2. [Fastify](https://github.com/fastify/fastify)
+
 **推荐指数**: ⭐⭐⭐⭐⭐
 
 **特点**:
+
 - 高性能的Web框架
 - 内置WebSocket支持
 - 优秀的TypeScript支持
 - 低内存占用
 
 **快速开始**:
+
 ```bash
 npm install fastify
 ```
 
 #### 3. [NestJS](https://github.com/nestjs/nest)
+
 **推荐指数**: ⭐⭐⭐⭐
 
 **特点**:
+
 - 企业级Node.js框架
 - 支持TypeScript
 - 依赖注入、装饰器等现代特性
 - 模块化架构
 
 **快速开始**:
+
 ```bash
 npm install -g @nestjs/cli
 nest new my-app
@@ -136,30 +157,36 @@ nest new my-app
 ### 数据库解决方案
 
 #### 1. [MongoDB](https://github.com/mongodb/mongo)
+
 **推荐指数**: ⭐⭐⭐⭐⭐
 
 **特点**:
+
 - 文档型数据库，适合游戏数据
 - 支持复杂查询
 - 水平扩展能力强
 - 丰富的驱动支持
 
 **快速开始**:
+
 ```bash
 # 使用Docker
 docker run -d -p 27017:27017 --name mongodb mongo:latest
 ```
 
 #### 2. [Redis](https://github.com/redis/redis)
+
 **推荐指数**: ⭐⭐⭐⭐⭐
 
 **特点**:
+
 - 内存数据库，性能极高
 - 支持多种数据结构
 - 内置发布订阅功能
 - 适合缓存和会话存储
 
 **快速开始**:
+
 ```bash
 # 使用Docker
 docker run -d -p 6379:6379 --name redis redis:latest
@@ -168,18 +195,22 @@ docker run -d -p 6379:6379 --name redis redis:latest
 ### 完整解决方案
 
 #### 1. [Game Server Kit](https://github.com/game-server-kit/game-server-kit)
+
 **推荐指数**: ⭐⭐⭐⭐
 
 **特点**:
+
 - 完整的游戏服务器解决方案
 - 包含用户认证、房间管理、排行榜
 - 支持多种数据库
 - 开箱即用
 
 #### 2. [Agora Gaming](https://github.com/AgoraIO/Agora-Gaming-SDK)
+
 **推荐指数**: ⭐⭐⭐⭐
 
 **特点**:
+
 - 专业的游戏通信解决方案
 - 支持音视频通信
 - 全球CDN网络
@@ -200,6 +231,7 @@ graph TD
 ```
 
 **优势**:
+
 - 技术栈成熟，社区支持好
 - 开发效率高
 - 易于扩展和维护
@@ -219,6 +251,7 @@ graph TD
 ```
 
 **优势**:
+
 - 专门为游戏设计
 - 性能优秀
 - 支持复杂游戏逻辑
@@ -239,6 +272,7 @@ graph TD
 ```
 
 **优势**:
+
 - 支持大规模并发
 - 高可用性
 - 易于水平扩展
@@ -278,6 +312,7 @@ snakesnake-server/
 #### 2. 核心功能实现
 
 **游戏房间管理**:
+
 ```javascript
 // roomManager.js
 class RoomManager {
@@ -311,6 +346,7 @@ class RoomManager {
 ```
 
 **游戏状态同步**:
+
 ```javascript
 // gameHandler.js
 class GameHandler {
@@ -322,14 +358,14 @@ class GameHandler {
   handlePlayerMove(socket, data) {
     const { roomId, playerId, direction } = data
     const room = this.roomManager.rooms.get(roomId)
-    
+
     if (room) {
       // 更新玩家位置
       const player = room.players.get(playerId)
       if (player) {
         player.direction = direction
         player.position = this.calculateNewPosition(player.position, direction)
-        
+
         // 检查碰撞
         if (this.checkCollision(player, room)) {
           this.endGame(roomId, playerId)
@@ -346,6 +382,7 @@ class GameHandler {
 #### 3. 数据库设计
 
 **用户表 (users)**:
+
 ```javascript
 {
   _id: ObjectId,
@@ -363,6 +400,7 @@ class GameHandler {
 ```
 
 **游戏记录表 (games)**:
+
 ```javascript
 {
   _id: ObjectId,
@@ -378,6 +416,7 @@ class GameHandler {
 ```
 
 **排行榜表 (rankings)**:
+
 ```javascript
 {
   _id: ObjectId,
@@ -391,6 +430,7 @@ class GameHandler {
 #### 4. API接口设计
 
 **用户认证**:
+
 ```javascript
 // POST /api/auth/login
 {
@@ -414,6 +454,7 @@ class GameHandler {
 ```
 
 **排行榜API**:
+
 ```javascript
 // GET /api/ranking/:type?page=1&limit=20
 // 响应
@@ -441,37 +482,39 @@ class GameHandler {
 #### 5. WebSocket事件
 
 **客户端事件**:
+
 ```javascript
 // 加入房间
 socket.emit('joinRoom', { roomId: 'room1' })
 
 // 发送移动指令
-socket.emit('playerMove', { 
-  roomId: 'room1', 
-  direction: 'up' 
+socket.emit('playerMove', {
+  roomId: 'room1',
+  direction: 'up'
 })
 
 // 收集礼包
-socket.emit('collectGift', { 
-  roomId: 'room1', 
-  giftId: 'gift1' 
+socket.emit('collectGift', {
+  roomId: 'room1',
+  giftId: 'gift1'
 })
 ```
 
 **服务器事件**:
+
 ```javascript
 // 游戏状态更新
-socket.on('gameStateUpdate', (data) => {
+socket.on('gameStateUpdate', data => {
   // 更新游戏画面
 })
 
 // 玩家加入/离开
-socket.on('playerJoined', (player) => {
+socket.on('playerJoined', player => {
   // 显示新玩家
 })
 
 // 游戏结束
-socket.on('gameEnd', (result) => {
+socket.on('gameEnd', result => {
   // 显示游戏结果
 })
 ```
@@ -487,7 +530,7 @@ services:
   game-server:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongo:27017/snakesnake
@@ -499,14 +542,14 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongo_data:/data/db
 
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
 
@@ -518,6 +561,7 @@ volumes:
 ### 云服务部署
 
 **推荐云服务**:
+
 - **阿里云**: 国内访问速度快，支持微信小程序
 - **腾讯云**: 微信生态集成好
 - **AWS**: 全球部署，功能丰富
@@ -582,4 +626,4 @@ npm run dev
 
 ---
 
-*最后更新时间: 2024年12月* 
+_最后更新时间: 2024年12月_

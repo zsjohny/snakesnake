@@ -47,7 +47,7 @@ Page({
       // 如果没有用户信息，尝试获取
       wx.getUserProfile({
         desc: '用于完善用户资料',
-        success: (res) => {
+        success: res => {
           app.globalData.userInfo = res.userInfo
           this.setData({
             userInfo: res.userInfo
@@ -292,7 +292,8 @@ Page({
   aboutApp () {
     wx.showModal({
       title: '关于应用',
-      content: '贪食蛇大战 v1.0.0\n\n一款多人在线实时对战的贪食蛇游戏\n\n开发者: SnakeGame Team\n\n感谢您的使用！',
+      content:
+        '贪食蛇大战 v1.0.0\n\n一款多人在线实时对战的贪食蛇游戏\n\n开发者: SnakeGame Team\n\n感谢您的使用！',
       showCancel: false,
       confirmText: '知道了'
     })
@@ -302,7 +303,7 @@ Page({
     wx.showModal({
       title: '退出登录',
       content: '确定要退出登录吗？',
-      success: (res) => {
+      success: res => {
         if (res.confirm) {
           // 清除用户信息
           app.globalData.userInfo = null

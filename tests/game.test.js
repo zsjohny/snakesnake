@@ -99,7 +99,10 @@ describe('游戏逻辑测试', () => {
   describe('蛇的移动逻辑', () => {
     test('向右移动应该增加x坐标', () => {
       const head = { ...mockGamePage.snake[0] }
-      const newHead = { x: head.x + mockGamePage.gameConfig.gridSize, y: head.y }
+      const newHead = {
+        x: head.x + mockGamePage.gameConfig.gridSize,
+        y: head.y
+      }
 
       expect(newHead.x).toBe(420)
       expect(newHead.y).toBe(300)
@@ -107,7 +110,10 @@ describe('游戏逻辑测试', () => {
 
     test('向左移动应该减少x坐标', () => {
       const head = { ...mockGamePage.snake[0] }
-      const newHead = { x: head.x - mockGamePage.gameConfig.gridSize, y: head.y }
+      const newHead = {
+        x: head.x - mockGamePage.gameConfig.gridSize,
+        y: head.y
+      }
 
       expect(newHead.x).toBe(380)
       expect(newHead.y).toBe(300)
@@ -115,7 +121,10 @@ describe('游戏逻辑测试', () => {
 
     test('向上移动应该减少y坐标', () => {
       const head = { ...mockGamePage.snake[0] }
-      const newHead = { x: head.x, y: head.y - mockGamePage.gameConfig.gridSize }
+      const newHead = {
+        x: head.x,
+        y: head.y - mockGamePage.gameConfig.gridSize
+      }
 
       expect(newHead.x).toBe(400)
       expect(newHead.y).toBe(280)
@@ -123,7 +132,10 @@ describe('游戏逻辑测试', () => {
 
     test('向下移动应该增加y坐标', () => {
       const head = { ...mockGamePage.snake[0] }
-      const newHead = { x: head.x, y: head.y + mockGamePage.gameConfig.gridSize }
+      const newHead = {
+        x: head.x,
+        y: head.y + mockGamePage.gameConfig.gridSize
+      }
 
       expect(newHead.x).toBe(400)
       expect(newHead.y).toBe(320)
@@ -136,7 +148,8 @@ describe('游戏逻辑测试', () => {
       const adjustedHead = { ...head }
 
       if (adjustedHead.x < 0) {
-        adjustedHead.x = mockGamePage.gameConfig.canvasWidth - mockGamePage.gameConfig.gridSize
+        adjustedHead.x =
+          mockGamePage.gameConfig.canvasWidth - mockGamePage.gameConfig.gridSize
       }
 
       expect(adjustedHead.x).toBe(780)
@@ -158,7 +171,9 @@ describe('游戏逻辑测试', () => {
       const adjustedHead = { ...head }
 
       if (adjustedHead.y < 0) {
-        adjustedHead.y = mockGamePage.gameConfig.canvasHeight - mockGamePage.gameConfig.gridSize
+        adjustedHead.y =
+          mockGamePage.gameConfig.canvasHeight -
+          mockGamePage.gameConfig.gridSize
       }
 
       expect(adjustedHead.y).toBe(580)
@@ -185,8 +200,9 @@ describe('游戏逻辑测试', () => {
         { x: 360, y: 300 } // 蛇身
       ]
 
-      const collision = snake.some((segment, index) =>
-        index > 0 && head.x === segment.x && head.y === segment.y
+      const collision = snake.some(
+        (segment, index) =>
+          index > 0 && head.x === segment.x && head.y === segment.y
       )
 
       expect(collision).toBe(true)
@@ -202,8 +218,8 @@ describe('游戏逻辑测试', () => {
         ]
       }
 
-      const collision = otherPlayer.snake.some(segment =>
-        head.x === segment.x && head.y === segment.y
+      const collision = otherPlayer.snake.some(
+        segment => head.x === segment.x && head.y === segment.y
       )
 
       expect(collision).toBe(true)
@@ -216,8 +232,8 @@ describe('游戏逻辑测试', () => {
         { x: 420, y: 320 }
       ]
 
-      const collision = food.some(item =>
-        head.x === item.x && head.y === item.y
+      const collision = food.some(
+        item => head.x === item.x && head.y === item.y
       )
 
       expect(collision).toBe(true)
@@ -230,8 +246,8 @@ describe('游戏逻辑测试', () => {
         { x: 420, y: 320, type: 'shield', points: 400 }
       ]
 
-      const collision = gifts.some(gift =>
-        head.x === gift.x && head.y === gift.y
+      const collision = gifts.some(
+        gift => head.x === gift.x && head.y === gift.y
       )
 
       expect(collision).toBe(true)
@@ -244,8 +260,8 @@ describe('游戏逻辑测试', () => {
         { x: 420, y: 320 }
       ]
 
-      const collision = blackHoles.some(blackHole =>
-        head.x === blackHole.x && head.y === blackHole.y
+      const collision = blackHoles.some(
+        blackHole => head.x === blackHole.x && head.y === blackHole.y
       )
 
       expect(collision).toBe(true)
@@ -283,8 +299,12 @@ describe('游戏逻辑测试', () => {
     })
 
     test('传送道具应该随机传送', () => {
-      const maxX = Math.floor(mockGamePage.gameConfig.canvasWidth / mockGamePage.gameConfig.gridSize)
-      const maxY = Math.floor(mockGamePage.gameConfig.canvasHeight / mockGamePage.gameConfig.gridSize)
+      const maxX = Math.floor(
+        mockGamePage.gameConfig.canvasWidth / mockGamePage.gameConfig.gridSize
+      )
+      const maxY = Math.floor(
+        mockGamePage.gameConfig.canvasHeight / mockGamePage.gameConfig.gridSize
+      )
 
       expect(maxX).toBe(40)
       expect(maxY).toBe(30)
@@ -338,7 +358,9 @@ describe('游戏逻辑测试', () => {
 
   describe('资源清理', () => {
     test('应该清理游戏循环定时器', () => {
-      const clearIntervalSpy = jest.spyOn(global, 'clearInterval').mockImplementation()
+      const clearIntervalSpy = jest
+        .spyOn(global, 'clearInterval')
+        .mockImplementation()
 
       // 模拟一个定时器ID
       mockGamePage.gameLoop = 123
@@ -350,7 +372,9 @@ describe('游戏逻辑测试', () => {
     })
 
     test('应该清理游戏时间定时器', () => {
-      const clearIntervalSpy = jest.spyOn(global, 'clearInterval').mockImplementation()
+      const clearIntervalSpy = jest
+        .spyOn(global, 'clearInterval')
+        .mockImplementation()
 
       // 模拟一个定时器ID
       mockGamePage.gameTimer = 456

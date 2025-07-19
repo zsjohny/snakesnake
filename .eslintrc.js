@@ -5,15 +5,10 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: [
-    'standard',
-    'plugin:jest/recommended'
-  ],
-  plugins: [
-    'jest'
-  ],
+  extends: ['standard'],
+  plugins: ['jest'],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module'
   },
   rules: {
@@ -21,23 +16,10 @@ module.exports = {
     'no-undef': 'off', // 微信小程序全局变量
     'no-unused-vars': 'warn',
     'no-console': 'warn',
-
-    // 代码风格
-    indent: ['error', 2],
-    quotes: ['error', 'single'],
-    semi: ['error', 'never'],
-    'comma-dangle': ['error', 'never'],
-    'space-before-function-paren': ['error', 'always'],
-
-    // 微信小程序API
-    'no-global-assign': 'off',
-
-    // 测试文件特殊规则
-    'jest/no-disabled-tests': 'warn',
-    'jest/no-focused-tests': 'error',
-    'jest/no-identical-title': 'error',
-    'jest/prefer-to-have-length': 'warn',
-    'jest/valid-expect': 'error'
+    complexity: ['warn', 10],
+    'max-depth': ['warn', 4],
+    'max-lines-per-function': ['warn', 50],
+    'max-params': ['warn', 5]
   },
   globals: {
     // 微信小程序全局变量

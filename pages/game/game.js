@@ -110,14 +110,23 @@ Page({
 
     // 设置画布样式
     this.ctx.setFillStyle('#2c3e50')
-    this.ctx.fillRect(0, 0, this.gameConfig.canvasWidth, this.gameConfig.canvasHeight)
+    this.ctx.fillRect(
+      0,
+      0,
+      this.gameConfig.canvasWidth,
+      this.gameConfig.canvasHeight
+    )
     this.ctx.draw()
   },
 
   initGameState () {
     // 初始化蛇的位置
-    const startX = Math.floor(this.gameConfig.canvasWidth / this.gameConfig.gridSize / 2) * this.gameConfig.gridSize
-    const startY = Math.floor(this.gameConfig.canvasHeight / this.gameConfig.gridSize / 2) * this.gameConfig.gridSize
+    const startX =
+      Math.floor(this.gameConfig.canvasWidth / this.gameConfig.gridSize / 2) *
+      this.gameConfig.gridSize
+    const startY =
+      Math.floor(this.gameConfig.canvasHeight / this.gameConfig.gridSize / 2) *
+      this.gameConfig.gridSize
 
     this.snake = [
       { x: startX, y: startY },
@@ -188,8 +197,15 @@ Page({
 
   generateRandomSnake () {
     const snake = []
-    const startX = Math.floor(Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)) * this.gameConfig.gridSize
-    const startY = Math.floor(Math.random() * (this.gameConfig.canvasHeight / this.gameConfig.gridSize)) * this.gameConfig.gridSize
+    const startX =
+      Math.floor(
+        Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
+      ) * this.gameConfig.gridSize
+    const startY =
+      Math.floor(
+        Math.random() *
+          (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
+      ) * this.gameConfig.gridSize
     const length = Math.floor(Math.random() * 5) + 3
 
     for (let i = 0; i < length; i++) {
@@ -203,7 +219,14 @@ Page({
   },
 
   getRandomColor () {
-    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c']
+    const colors = [
+      '#e74c3c',
+      '#3498db',
+      '#2ecc71',
+      '#f39c12',
+      '#9b59b6',
+      '#1abc9c'
+    ]
     return colors[Math.floor(Math.random() * colors.length)]
   },
 
@@ -247,24 +270,28 @@ Page({
 
     // 根据方向移动蛇头
     switch (this.direction) {
-    case 'up':
-      head.y -= this.gameConfig.gridSize
-      break
-    case 'down':
-      head.y += this.gameConfig.gridSize
-      break
-    case 'left':
-      head.x -= this.gameConfig.gridSize
-      break
-    case 'right':
-      head.x += this.gameConfig.gridSize
-      break
+      case 'up':
+        head.y -= this.gameConfig.gridSize
+        break
+      case 'down':
+        head.y += this.gameConfig.gridSize
+        break
+      case 'left':
+        head.x -= this.gameConfig.gridSize
+        break
+      case 'right':
+        head.x += this.gameConfig.gridSize
+        break
     }
 
     // 边界检查（允许穿墙）
-    if (head.x < 0) head.x = this.gameConfig.canvasWidth - this.gameConfig.gridSize
+    if (head.x < 0) {
+      head.x = this.gameConfig.canvasWidth - this.gameConfig.gridSize
+    }
     if (head.x >= this.gameConfig.canvasWidth) head.x = 0
-    if (head.y < 0) head.y = this.gameConfig.canvasHeight - this.gameConfig.gridSize
+    if (head.y < 0) {
+      head.y = this.gameConfig.canvasHeight - this.gameConfig.gridSize
+    }
     if (head.y >= this.gameConfig.canvasHeight) head.y = 0
 
     // 在蛇头前添加新位置
@@ -358,8 +385,16 @@ Page({
   generateFood () {
     while (this.food.length < 5) {
       const food = {
-        x: Math.floor(Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)) * this.gameConfig.gridSize,
-        y: Math.floor(Math.random() * (this.gameConfig.canvasHeight / this.gameConfig.gridSize)) * this.gameConfig.gridSize
+        x:
+          Math.floor(
+            Math.random() *
+              (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
+          ) * this.gameConfig.gridSize,
+        y:
+          Math.floor(
+            Math.random() *
+              (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
+          ) * this.gameConfig.gridSize
       }
 
       // 检查是否与蛇身重叠
@@ -395,9 +430,19 @@ Page({
 
   spawnGift () {
     const gift = {
-      x: Math.floor(Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)) * this.gameConfig.gridSize,
-      y: Math.floor(Math.random() * (this.gameConfig.canvasHeight / this.gameConfig.gridSize)) * this.gameConfig.gridSize,
-      type: ['speed', 'shield', 'teleport', 'points'][Math.floor(Math.random() * 4)],
+      x:
+        Math.floor(
+          Math.random() *
+            (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
+        ) * this.gameConfig.gridSize,
+      y:
+        Math.floor(
+          Math.random() *
+            (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
+        ) * this.gameConfig.gridSize,
+      type: ['speed', 'shield', 'teleport', 'points'][
+        Math.floor(Math.random() * 4)
+      ],
       points: Math.floor(Math.random() * 500) + 200
     }
 
@@ -409,8 +454,16 @@ Page({
 
   spawnBlackHole () {
     const blackHole = {
-      x: Math.floor(Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)) * this.gameConfig.gridSize,
-      y: Math.floor(Math.random() * (this.gameConfig.canvasHeight / this.gameConfig.gridSize)) * this.gameConfig.gridSize
+      x:
+        Math.floor(
+          Math.random() *
+            (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
+        ) * this.gameConfig.gridSize,
+      y:
+        Math.floor(
+          Math.random() *
+            (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
+        ) * this.gameConfig.gridSize
     }
 
     this.blackHoles.push(blackHole)
@@ -421,21 +474,21 @@ Page({
 
   applyGiftEffect (type) {
     switch (type) {
-    case 'speed':
-      // 临时加速
-      this.temporarySpeedBoost()
-      break
-    case 'shield':
-      // 临时护盾
-      this.temporaryShield()
-      break
-    case 'teleport':
-      // 随机传送
-      this.randomTeleport()
-      break
-    case 'points':
-      // 额外分数已在checkGiftCollision中处理
-      break
+      case 'speed':
+        // 临时加速
+        this.temporarySpeedBoost()
+        break
+      case 'shield':
+        // 临时护盾
+        this.temporaryShield()
+        break
+      case 'teleport':
+        // 随机传送
+        this.randomTeleport()
+        break
+      case 'points':
+        // 额外分数已在checkGiftCollision中处理
+        break
     }
   },
 
@@ -455,14 +508,26 @@ Page({
 
   randomTeleport () {
     const head = this.snake[0]
-    head.x = Math.floor(Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)) * this.gameConfig.gridSize
-    head.y = Math.floor(Math.random() * (this.gameConfig.canvasHeight / this.gameConfig.gridSize)) * this.gameConfig.gridSize
+    head.x =
+      Math.floor(
+        Math.random() * (this.gameConfig.canvasWidth / this.gameConfig.gridSize)
+      ) * this.gameConfig.gridSize
+    head.y =
+      Math.floor(
+        Math.random() *
+          (this.gameConfig.canvasHeight / this.gameConfig.gridSize)
+      ) * this.gameConfig.gridSize
   },
 
   renderGame () {
     // 清空画布
     this.ctx.setFillStyle('#2c3e50')
-    this.ctx.fillRect(0, 0, this.gameConfig.canvasWidth, this.gameConfig.canvasHeight)
+    this.ctx.fillRect(
+      0,
+      0,
+      this.gameConfig.canvasWidth,
+      this.gameConfig.canvasHeight
+    )
 
     // 绘制网格
     this.drawGrid()
@@ -490,14 +555,22 @@ Page({
     this.ctx.setStrokeStyle('#34495e')
     this.ctx.setLineWidth(1)
 
-    for (let x = 0; x <= this.gameConfig.canvasWidth; x += this.gameConfig.gridSize) {
+    for (
+      let x = 0;
+      x <= this.gameConfig.canvasWidth;
+      x += this.gameConfig.gridSize
+    ) {
       this.ctx.beginPath()
       this.ctx.moveTo(x, 0)
       this.ctx.lineTo(x, this.gameConfig.canvasHeight)
       this.ctx.stroke()
     }
 
-    for (let y = 0; y <= this.gameConfig.canvasHeight; y += this.gameConfig.gridSize) {
+    for (
+      let y = 0;
+      y <= this.gameConfig.canvasHeight;
+      y += this.gameConfig.gridSize
+    ) {
       this.ctx.beginPath()
       this.ctx.moveTo(0, y)
       this.ctx.lineTo(this.gameConfig.canvasWidth, y)
@@ -508,14 +581,24 @@ Page({
   drawFood () {
     this.ctx.setFillStyle('#e74c3c')
     for (const food of this.food) {
-      this.ctx.fillRect(food.x + 2, food.y + 2, this.gameConfig.gridSize - 4, this.gameConfig.gridSize - 4)
+      this.ctx.fillRect(
+        food.x + 2,
+        food.y + 2,
+        this.gameConfig.gridSize - 4,
+        this.gameConfig.gridSize - 4
+      )
     }
   },
 
   drawGifts () {
     this.ctx.setFillStyle('#f39c12')
     for (const gift of this.gifts) {
-      this.ctx.fillRect(gift.x + 1, gift.y + 1, this.gameConfig.gridSize - 2, this.gameConfig.gridSize - 2)
+      this.ctx.fillRect(
+        gift.x + 1,
+        gift.y + 1,
+        this.gameConfig.gridSize - 2,
+        this.gameConfig.gridSize - 2
+      )
     }
   },
 
@@ -523,7 +606,13 @@ Page({
     this.ctx.setFillStyle('#000000')
     for (const blackHole of this.blackHoles) {
       this.ctx.beginPath()
-      this.ctx.arc(blackHole.x + this.gameConfig.gridSize / 2, blackHole.y + this.gameConfig.gridSize / 2, this.gameConfig.gridSize / 2, 0, 2 * Math.PI)
+      this.ctx.arc(
+        blackHole.x + this.gameConfig.gridSize / 2,
+        blackHole.y + this.gameConfig.gridSize / 2,
+        this.gameConfig.gridSize / 2,
+        0,
+        2 * Math.PI
+      )
       this.ctx.fill()
     }
   },
@@ -532,7 +621,12 @@ Page({
     for (const player of this.otherPlayers) {
       this.ctx.setFillStyle(player.color)
       for (const segment of player.snake) {
-        this.ctx.fillRect(segment.x + 1, segment.y + 1, this.gameConfig.gridSize - 2, this.gameConfig.gridSize - 2)
+        this.ctx.fillRect(
+          segment.x + 1,
+          segment.y + 1,
+          this.gameConfig.gridSize - 2,
+          this.gameConfig.gridSize - 2
+        )
       }
     }
   },
@@ -541,12 +635,22 @@ Page({
     // 绘制蛇身
     this.ctx.setFillStyle('#2ecc71')
     for (let i = 1; i < this.snake.length; i++) {
-      this.ctx.fillRect(this.snake[i].x + 1, this.snake[i].y + 1, this.gameConfig.gridSize - 2, this.gameConfig.gridSize - 2)
+      this.ctx.fillRect(
+        this.snake[i].x + 1,
+        this.snake[i].y + 1,
+        this.gameConfig.gridSize - 2,
+        this.gameConfig.gridSize - 2
+      )
     }
 
     // 绘制蛇头
     this.ctx.setFillStyle('#27ae60')
-    this.ctx.fillRect(this.snake[0].x + 1, this.snake[0].y + 1, this.gameConfig.gridSize - 2, this.gameConfig.gridSize - 2)
+    this.ctx.fillRect(
+      this.snake[0].x + 1,
+      this.snake[0].y + 1,
+      this.gameConfig.gridSize - 2,
+      this.gameConfig.gridSize - 2
+    )
   },
 
   // 控制方法
@@ -704,7 +808,9 @@ Page({
     })
 
     // 更新自己的排名
-    const currentPlayer = rankingList.find(player => player.id === 'current_player')
+    const currentPlayer = rankingList.find(
+      player => player.id === 'current_player'
+    )
     if (currentPlayer) {
       this.setData({
         rank: currentPlayer.rank

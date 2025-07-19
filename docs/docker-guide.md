@@ -28,7 +28,7 @@ graph TD
     A --> C[MongoDB]
     A --> D[Redis]
     A --> E[Nginx]
-    
+
     B --> F[微信小程序]
     C --> G[数据存储]
     D --> H[缓存服务]
@@ -38,7 +38,8 @@ graph TD
 ## 🔧 环境要求
 
 ### 系统要求
-- **Docker**: 20.10+ 
+
+- **Docker**: 20.10+
 - **Docker Compose**: 2.0+
 - **操作系统**: Linux, macOS, Windows 10/11
 - **内存**: 至少 4GB RAM
@@ -47,6 +48,7 @@ graph TD
 ### 安装 Docker
 
 #### Linux (Ubuntu/Debian)
+
 ```bash
 # 安装 Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -65,6 +67,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 #### macOS
+
 ```bash
 # 使用 Homebrew 安装
 brew install --cask docker
@@ -74,6 +77,7 @@ brew install --cask docker
 ```
 
 #### Windows
+
 ```bash
 # 从官网下载 Docker Desktop
 # https://www.docker.com/products/docker-desktop
@@ -82,12 +86,14 @@ brew install --cask docker
 ## 🚀 快速开始
 
 ### 1. 克隆项目
+
 ```bash
 git clone https://github.com/zsjohny/snakesnake.git
 cd snakesnake
 ```
 
 ### 2. 配置环境变量
+
 ```bash
 # 复制环境变量模板
 cp .env.example .env
@@ -97,6 +103,7 @@ nano .env
 ```
 
 ### 3. 启动开发环境
+
 ```bash
 # 构建并启动开发环境
 docker-compose up --build
@@ -106,12 +113,14 @@ docker-compose up -d --build
 ```
 
 ### 4. 访问应用
+
 - **开发环境**: http://localhost:3000
 - **API 文档**: http://localhost:3000/api/docs
 
 ## 🛠️ 开发环境
 
 ### 启动开发环境
+
 ```bash
 # 启动开发环境
 docker-compose up --build
@@ -124,12 +133,14 @@ docker-compose logs -f snakesnake-dev
 ```
 
 ### 开发环境特性
+
 - **热重载**: 代码修改自动重启
 - **调试支持**: 支持断点调试
 - **实时日志**: 实时查看应用日志
 - **环境变量**: 支持 .env 文件配置
 
 ### 开发命令
+
 ```bash
 # 进入容器
 docker-compose exec snakesnake-dev sh
@@ -147,6 +158,7 @@ docker-compose exec snakesnake-dev npm install package-name
 ## 🧪 测试环境
 
 ### 启动测试环境
+
 ```bash
 # 运行测试
 docker-compose --profile test up --build
@@ -156,6 +168,7 @@ docker-compose --profile test run --rm snakesnake-test
 ```
 
 ### 测试环境特性
+
 - **隔离测试**: 独立的测试环境
 - **自动化测试**: 自动运行所有测试
 - **代码覆盖率**: 生成测试覆盖率报告
@@ -164,6 +177,7 @@ docker-compose --profile test run --rm snakesnake-test
 ## 🚀 生产环境
 
 ### 启动生产环境
+
 ```bash
 # 启动完整生产环境
 docker-compose --profile production up -d --build
@@ -173,6 +187,7 @@ docker-compose up -d snakesnake-prod
 ```
 
 ### 生产环境特性
+
 - **多服务支持**: 应用、数据库、缓存、反向代理
 - **负载均衡**: Nginx 反向代理
 - **数据持久化**: MongoDB 和 Redis 数据持久化
@@ -180,6 +195,7 @@ docker-compose up -d snakesnake-prod
 - **健康检查**: 服务健康状态监控
 
 ### 生产环境配置
+
 ```bash
 # 创建生产环境配置文件
 cp .env.example .env.production
@@ -194,6 +210,7 @@ docker-compose --env-file .env.production --profile production up -d
 ## 📋 常用命令
 
 ### 基础命令
+
 ```bash
 # 构建镜像
 docker-compose build
@@ -215,6 +232,7 @@ docker-compose restart
 ```
 
 ### 开发命令
+
 ```bash
 # 进入开发容器
 docker-compose exec snakesnake-dev sh
@@ -233,6 +251,7 @@ docker-compose exec snakesnake-dev npm run build
 ```
 
 ### 数据库命令
+
 ```bash
 # 进入 MongoDB 容器
 docker-compose exec mongodb mongosh
@@ -248,6 +267,7 @@ docker-compose exec redis redis-cli
 ```
 
 ### 维护命令
+
 ```bash
 # 清理未使用的镜像
 docker image prune
@@ -270,8 +290,10 @@ docker system df
 ### 常见问题
 
 #### 1. 端口冲突
+
 **问题**: 端口 3000 已被占用
 **解决方案**:
+
 ```bash
 # 查看端口占用
 lsof -i :3000
@@ -282,8 +304,10 @@ ports:
 ```
 
 #### 2. 权限问题
+
 **问题**: Docker 权限不足
 **解决方案**:
+
 ```bash
 # 添加用户到 docker 组
 sudo usermod -aG docker $USER
@@ -295,8 +319,10 @@ sudo systemctl restart docker
 ```
 
 #### 3. 内存不足
+
 **问题**: 容器内存不足
 **解决方案**:
+
 ```bash
 # 增加 Docker 内存限制
 # 在 Docker Desktop 设置中调整内存限制
@@ -309,8 +335,10 @@ sudo swapon /swapfile
 ```
 
 #### 4. 网络问题
+
 **问题**: 容器间无法通信
 **解决方案**:
+
 ```bash
 # 重建网络
 docker-compose down
@@ -323,6 +351,7 @@ docker network inspect snakesnake_snakesnake-network
 ```
 
 ### 日志查看
+
 ```bash
 # 查看所有服务日志
 docker-compose logs
@@ -338,6 +367,7 @@ docker-compose logs --tail=100 | grep ERROR
 ```
 
 ### 性能监控
+
 ```bash
 # 查看容器资源使用情况
 docker stats
@@ -352,6 +382,7 @@ docker-compose exec snakesnake-dev ps aux
 ## 📚 进阶配置
 
 ### 自定义 Dockerfile
+
 ```dockerfile
 # 自定义基础镜像
 FROM node:18-alpine AS custom-base
@@ -379,6 +410,7 @@ CMD ["npm", "start"]
 ```
 
 ### 自定义 Docker Compose
+
 ```yaml
 # 添加自定义服务
 services:
@@ -386,7 +418,7 @@ services:
     image: custom-image
     container_name: custom-container
     ports:
-      - "8080:80"
+      - '8080:80'
     environment:
       - CUSTOM_VAR=value
     networks:
@@ -394,6 +426,7 @@ services:
 ```
 
 ### 环境变量配置
+
 ```bash
 # .env 文件示例
 NODE_ENV=development
@@ -413,11 +446,13 @@ REDIS_PASSWORD=redis-password
 ## 📞 技术支持
 
 ### 官方资源
+
 - [Docker 官方文档](https://docs.docker.com/)
 - [Docker Compose 文档](https://docs.docker.com/compose/)
 - [Docker Hub](https://hub.docker.com/)
 
 ### 项目支持
+
 - **开发者**: JohnyZheng (@zsjohny)
 - **邮箱**: zs.johny@163.com
 - **GitHub**: https://github.com/zsjohny/snakesnake
@@ -425,4 +460,4 @@ REDIS_PASSWORD=redis-password
 
 ---
 
-**注意**: 使用 Docker 前请确保已正确安装 Docker 和 Docker Compose，并了解基本的 Docker 概念和命令。 
+**注意**: 使用 Docker 前请确保已正确安装 Docker 和 Docker Compose，并了解基本的 Docker 概念和命令。
