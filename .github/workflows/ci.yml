@@ -171,6 +171,10 @@ jobs:
     needs: [lint, test, build, security, quality]
     if: github.ref == 'refs/heads/main'
     environment: production
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -190,7 +194,7 @@ jobs:
 
       - name: Create production release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -215,8 +219,13 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Create release zip
+        run: |
+          mkdir -p dist
+          zip -r dist/snakesnake.zip . -x "node_modules/*" ".git/*" "tests/*" "docs/*" "images/*" ".github/*" "*.md" "docker-compose.yml" "Dockerfile"
+      
       - name: Upload release assets
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
