@@ -128,6 +128,37 @@ graph TD
     T -->|否| U[返回大厅]
 ```
 
+### 详细游戏循环图
+
+```mermaid
+graph TD
+    A[游戏循环开始] --> B[处理用户输入]
+    B --> C[更新蛇的位置]
+    C --> D[检查碰撞检测]
+    D --> E{发生碰撞?}
+    E -->|是| F[游戏结束处理]
+    E -->|否| G[检查食物收集]
+    G --> H{吃到食物?}
+    H -->|是| I[增加分数和长度]
+    H -->|否| J[检查礼包收集]
+    I --> J
+    J --> K{收集礼包?}
+    K -->|是| L[应用礼包效果]
+    K -->|否| M[检查黑洞碰撞]
+    L --> M
+    M --> N{碰到黑洞?}
+    N -->|是| F
+    N -->|否| O[更新游戏状态]
+    O --> P[发送状态到服务器]
+    P --> Q[接收其他玩家状态]
+    Q --> R[渲染游戏画面]
+    R --> S[等待下一帧]
+    S --> A
+    F --> T[保存游戏记录]
+    T --> U[更新排行榜]
+    U --> V[显示结果界面]
+```
+
 ### 数据流图
 
 ```mermaid
@@ -158,6 +189,48 @@ sequenceDiagram
     Game->>DB: 保存游戏结果
     Game->>Cache: 更新排行榜
     WS->>Client: 发送游戏结果
+```
+
+### 详细数据交互图
+
+```mermaid
+sequenceDiagram
+    participant User as 用户
+    participant UI as 用户界面
+    participant Game as 游戏引擎
+    participant Network as 网络层
+    participant Server as 服务器
+    participant DB as 数据库
+
+    User->>UI: 点击开始游戏
+    UI->>Game: 初始化游戏
+    Game->>Network: 连接服务器
+    Network->>Server: WebSocket连接
+    Server->>DB: 查询用户信息
+    DB->>Server: 返回用户数据
+    Server->>Network: 连接成功
+    Network->>Game: 连接确认
+
+    loop 游戏进行
+        User->>UI: 方向控制
+        UI->>Game: 更新方向
+        Game->>Network: 发送移动数据
+        Network->>Server: 处理移动
+        Server->>Server: 更新游戏状态
+        Server->>Network: 广播状态
+        Network->>Game: 接收状态
+        Game->>UI: 更新画面
+        UI->>User: 显示游戏画面
+    end
+
+    Game->>Network: 游戏结束
+    Network->>Server: 保存结果
+    Server->>DB: 更新排行榜
+    DB->>Server: 确认更新
+    Server->>Network: 返回结果
+    Network->>Game: 显示结果
+    Game->>UI: 更新界面
+    UI->>User: 显示游戏结果
 ```
 
 ### 组件关系图
@@ -198,7 +271,135 @@ sequenceDiagram
 │  │  │ (得分系统)   │ │ (排行榜)    │ │ (网络管理)   │       │ │
 │  │  └─────────────┘ └─────────────┘ └─────────────┘       │ │
 │  └─────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
+```
+
+### 详细组件架构图
+
+```mermaid
+graph TB
+    subgraph "表现层 (Presentation Layer)"
+        A[App.js] --> B[Index页面]
+        A --> C[Game页面]
+        A --> D[Rank页面]
+        A --> E[Profile页面]
+    end
+
+    subgraph "业务层 (Business Layer)"
+        F[游戏引擎] --> G[游戏循环]
+        F --> H[碰撞检测]
+        F --> I[得分系统]
+        F --> J[排行榜系统]
+        F --> K[道具系统]
+    end
+
+    subgraph "服务层 (Service Layer)"
+        L[网络服务] --> M[WebSocket连接]
+        L --> N[API请求]
+        L --> O[数据同步]
+    end
+
+    subgraph "数据层 (Data Layer)"
+        P[本地存储] --> Q[用户设置]
+        P --> R[游戏缓存]
+        S[远程数据] --> T[用户信息]
+        S --> U[排行榜数据]
+        S --> V[游戏记录]
+    end
+
+    B --> F
+    C --> F
+    D --> L
+    E --> L
+    F --> L
+    L --> S
+    F --> P
+```
+
+### 网络通信架构图
+
+```mermaid
+graph LR
+    subgraph "客户端"
+        A[微信小程序]
+        B[Canvas渲染]
+        C[用户输入]
+        D[本地状态]
+    end
+
+    subgraph "网络层"
+        E[WebSocket连接]
+        F[消息队列]
+        G[断线重连]
+    end
+
+    subgraph "服务器端"
+        H[WebSocket服务器]
+        I[游戏逻辑服务]
+        J[房间管理]
+        K[排行榜服务]
+    end
+
+    subgraph "数据存储"
+        L[MongoDB]
+        M[Redis缓存]
+        N[文件存储]
+    end
+
+    A --> E
+    B --> A
+    C --> A
+    D --> A
+    E --> F
+    F --> G
+    E --> H
+    H --> I
+    I --> J
+    I --> K
+    J --> L
+    K --> M
+    I --> M
+```
+
+### 游戏状态机图
+
+```mermaid
+stateDiagram-v2
+    [*] --> 初始化
+    初始化 --> 连接中: 启动应用
+    连接中 --> 已连接: 连接成功
+    连接中 --> 连接失败: 连接失败
+    连接失败 --> 连接中: 重试
+    已连接 --> 大厅: 进入大厅
+    大厅 --> 匹配中: 开始匹配
+    匹配中 --> 游戏中: 匹配成功
+    匹配中 --> 大厅: 取消匹配
+    游戏中 --> 游戏结束: 游戏结束
+    游戏结束 --> 大厅: 返回大厅
+    游戏结束 --> 匹配中: 再来一局
+    大厅 --> 已连接: 断开连接
+    已连接 --> [*]: 退出应用
+```
+
+### 性能监控架构图
+
+```mermaid
+graph TD
+    A[游戏客户端] --> B[性能监控]
+    B --> C[FPS监控]
+    B --> D[内存监控]
+    B --> E[网络延迟]
+    B --> F[错误日志]
+    
+    C --> G[性能数据收集]
+    D --> G
+    E --> G
+    F --> G
+    
+    G --> H[数据上报]
+    H --> I[监控服务器]
+    I --> J[数据分析]
+    J --> K[性能报告]
+    J --> L[告警系统]
 ```
 
 ### 数据库设计图

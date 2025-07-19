@@ -15,18 +15,38 @@
     "init:linux": "chmod +x scripts/init-dev.sh && ./scripts/init-dev.sh",
     "init:macos": "chmod +x scripts/init-dev.sh && ./scripts/init-dev.sh",
     "init:windows": "scripts\\init-dev.bat",
+    "init:docker": "docker-compose up --build -d",
     "docker:dev": "docker-compose up --build",
     "docker:test": "docker-compose --profile test up --build",
     "docker:prod": "docker-compose --profile production up -d --build",
     "docker:down": "docker-compose down",
-    "docker:clean": "docker system prune -f"
+    "docker:clean": "docker system prune -f",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart",
+    "docker:rebuild": "docker-compose down && docker-compose up --build -d",
+    "setup": "npm run lint && npm test",
+    "prepublish": "npm run setup",
+    "postinstall": "echo 'SnakeSnake 依赖安装完成！运行 npm run init:linux 或 npm run init:macos 或 npm run init:windows 来初始化开发环境'",
+    "clean": "rm -rf node_modules package-lock.json && npm install",
+    "update": "npm update && npm audit fix",
+    "security": "npm audit",
+    "security:fix": "npm audit fix",
+    "docs": "echo '文档位置: docs/' && ls -la docs/",
+    "help": "echo 'SnakeSnake 可用命令:' && npm run",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "release": "npm run setup && npm run version:patch && git push && git push --tags"
   },
   "keywords": [
     "微信小程序",
     "贪食蛇",
     "多人在线",
     "游戏",
-    "实时对战"
+    "实时对战",
+    "canvas",
+    "websocket",
+    "miniprogram"
   ],
   "author": "JohnyZheng <zs.johny@163.com>",
   "license": "MIT",
@@ -38,6 +58,10 @@
     "url": "https://github.com/zsjohny/snakesnake/issues"
   },
   "homepage": "https://github.com/zsjohny/snakesnake#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "devDependencies": {
     "eslint": "^8.55.0",
     "eslint-config-standard": "^17.1.0",
@@ -62,6 +86,26 @@
       "text",
       "lcov",
       "html"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js",
+      "**/tests/**/*.spec.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
     ]
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "plugins": ["jest"],
+    "env": {
+      "jest": true,
+      "es6": true,
+      "node": true
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-unused-vars": "warn"
+    }
   }
 }

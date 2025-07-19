@@ -1,117 +1,158 @@
 @echo off
-chcp 65001 >nul
+REM SnakeSnake 开发环境初始化脚本
+REM 支持 Windows 系统
+REM 作者: JohnyZheng <zs.johny@163.com>
+
 setlocal enabledelayedexpansion
 
-REM SnakeSnake 开发环境初始化脚本 (Windows)
-REM 支持 Windows 10/11 系统
+REM 设置颜色代码
+set "RED=[91m"
+set "GREEN=[92m"
+set "YELLOW=[93m"
+set "BLUE=[94m"
+set "PURPLE=[95m"
+set "CYAN=[96m"
+set "NC=[0m"
 
-echo ================================
-echo   SnakeSnake 开发环境初始化
-echo ================================
-echo.
+REM 打印带颜色的消息
+:print_message
+echo %GREEN%[INFO]%NC% %~1
+goto :eof
 
-REM 检查管理员权限
-net session >nul 2>&1
-if %errorLevel% == 0 (
-    echo [INFO] 检测到管理员权限
+:print_warning
+echo %YELLOW%[WARNING]%NC% %~1
+goto :eof
+
+:print_error
+echo %RED%[ERROR]%NC% %~1
+goto :eof
+
+:print_success
+echo %GREEN%[SUCCESS]%NC% %~1
+goto :eof
+
+:print_step
+echo %CYAN%[STEP]%NC% %~1
+goto :eof
+
+:print_header
+echo %BLUE%================================%NC%
+echo %BLUE%  SnakeSnake 开发环境初始化%NC%
+echo %BLUE%================================%NC%
+goto :eof
+
+REM 检查命令是否存在
+:command_exists
+where %1 >nul 2>&1
+if %errorlevel% equ 0 (
+    exit /b 0
 ) else (
-    echo [WARNING] 未检测到管理员权限，某些功能可能受限
+    exit /b 1
+)
+
+REM 检查版本是否满足要求
+:check_version
+set "current_version=%~1"
+set "required_version=%~2"
+set "tool_name=%~3"
+
+REM 简单的版本比较（仅支持主版本号）
+for /f "tokens=1 delims=." %%a in ("%current_version%") do set "current_major=%%a"
+for /f "tokens=1 delims=." %%a in ("%required_version%") do set "required_major=%%a"
+
+if %current_major% geq %required_major% (
+    call :print_message "%tool_name% 版本满足要求: %current_version% >= %required_version%"
+    exit /b 0
+) else (
+    call :print_warning "%tool_name% 版本过低: %current_version% < %required_version%"
+    exit /b 1
 )
 
 REM 检查 Node.js
-echo [INFO] 检查 Node.js...
-node --version >nul 2>&1
-if %errorLevel% == 0 (
-    for /f "tokens=*" %%i in ('node --version') do set NODE_VERSION=%%i
-    echo [INFO] Node.js 已安装: !NODE_VERSION!
+:install_nodejs
+call :print_step "检查 Node.js..."
+call :command_exists node
+if %errorlevel% equ 0 (
+    for /f "tokens=*" %%i in ('node --version') do set "NODE_VERSION=%%i"
+    set "NODE_VERSION=!NODE_VERSION:v=!"
+    call :print_message "Node.js 已安装: v!NODE_VERSION!"
     
-    REM 检查版本
-    for /f "tokens=2 delims=v" %%i in ('node --version') do set NODE_MAJOR=%%i
-    for /f "tokens=1 delims=." %%i in ("!NODE_MAJOR!") do set NODE_MAJOR=%%i
-    if !NODE_MAJOR! geq 18 (
-        echo [INFO] Node.js 版本满足要求 (^>= 18.0.0)
-    ) else (
-        echo [WARNING] Node.js 版本过低，建议升级到 18.0.0 或更高版本
+    call :check_version "!NODE_VERSION!" "18.0.0" "Node.js"
+    if %errorlevel% neq 0 (
+        call :print_warning "建议升级 Node.js 到 18.0.0 或更高版本"
+        set /p "response=是否继续使用当前版本? (y/n): "
+        if /i not "!response!"=="y" (
+            call :print_message "请手动升级 Node.js 后重新运行脚本"
+            exit /b 1
+        )
     )
 ) else (
-    echo [INFO] 正在安装 Node.js...
-    echo [INFO] 请访问 https://nodejs.org/ 下载并安装 Node.js 18.x 或更高版本
-    echo [INFO] 安装完成后请重新运行此脚本
+    call :print_message "正在安装 Node.js..."
+    call :print_message "请访问 https://nodejs.org/ 下载并安装 Node.js 18.x 或更高版本"
+    call :print_message "安装完成后重新运行此脚本"
     pause
     exit /b 1
 )
+goto :eof
 
 REM 检查 npm
-echo [INFO] 检查 npm...
-npm --version >nul 2>&1
-if %errorLevel% == 0 (
-    for /f "tokens=*" %%i in ('npm --version') do set NPM_VERSION=%%i
-    echo [INFO] npm 已安装: !NPM_VERSION!
+:install_npm
+call :print_step "检查 npm..."
+call :command_exists npm
+if %errorlevel% equ 0 (
+    for /f "tokens=*" %%i in ('npm --version') do set "NPM_VERSION=%%i"
+    call :print_message "npm 已安装: !NPM_VERSION!"
+    
+    call :check_version "!NPM_VERSION!" "8.0.0" "npm"
+    if %errorlevel% neq 0 (
+        call :print_warning "npm 版本较低，建议升级"
+    )
 ) else (
-    echo [ERROR] npm 未安装，请先安装 Node.js
-    pause
+    call :print_error "npm 未安装，请先安装 Node.js"
     exit /b 1
 )
+goto :eof
 
 REM 检查 Git
-echo [INFO] 检查 Git...
-git --version >nul 2>&1
-if %errorLevel% == 0 (
-    for /f "tokens=*" %%i in ('git --version') do set GIT_VERSION=%%i
-    echo [INFO] Git 已安装: !GIT_VERSION!
+:install_git
+call :print_step "检查 Git..."
+call :command_exists git
+if %errorlevel% equ 0 (
+    for /f "tokens=3" %%i in ('git --version') do set "GIT_VERSION=%%i"
+    call :print_message "Git 已安装: !GIT_VERSION!"
 ) else (
-    echo [INFO] 正在安装 Git...
-    echo [INFO] 请访问 https://git-scm.com/download/win 下载并安装 Git
-    echo [INFO] 安装完成后请重新运行此脚本
+    call :print_message "正在安装 Git..."
+    call :print_message "请访问 https://git-scm.com/ 下载并安装 Git"
+    call :print_message "安装完成后重新运行此脚本"
     pause
     exit /b 1
 )
+goto :eof
 
-REM 检查 Docker (可选)
-echo [INFO] 检查 Docker...
-docker --version >nul 2>&1
-if %errorLevel% == 0 (
-    for /f "tokens=*" %%i in ('docker --version') do set DOCKER_VERSION=%%i
-    echo [INFO] Docker 已安装: !DOCKER_VERSION!
+REM 检查 Docker
+:install_docker
+call :print_step "检查 Docker..."
+call :command_exists docker
+if %errorlevel% equ 0 (
+    for /f "tokens=3 delims=," %%i in ('docker --version') do set "DOCKER_VERSION=%%i"
+    call :print_message "Docker 已安装: !DOCKER_VERSION!"
 ) else (
-    echo [WARNING] Docker 未安装，是否安装? (Y/N)
-    set /p DOCKER_CHOICE=
-    if /i "!DOCKER_CHOICE!"=="Y" (
-        echo [INFO] 正在安装 Docker...
-        echo [INFO] 请访问 https://www.docker.com/products/docker-desktop 下载并安装 Docker Desktop
-        echo [INFO] 安装完成后请重新运行此脚本
+    call :print_warning "Docker 未安装，是否安装? (y/n)"
+    set /p "response=请输入选择: "
+    if /i "!response!"=="y" (
+        call :print_message "正在安装 Docker..."
+        call :print_message "请访问 https://www.docker.com/products/docker-desktop 下载并安装 Docker Desktop"
+        call :print_message "安装完成后重新运行此脚本"
         pause
-        exit /b 1
     ) else (
-        echo [INFO] 跳过 Docker 安装
+        call :print_message "跳过 Docker 安装"
     )
 )
-
-REM 安装微信开发者工具
-echo [INFO] 请手动安装微信开发者工具:
-echo [INFO] 下载地址: https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html
-echo [INFO] Windows 用户可以直接下载 .exe 文件安装
-echo.
-
-REM 安装项目依赖
-echo [INFO] 正在安装项目依赖...
-if exist "package.json" (
-    npm install
-    if !errorLevel! == 0 (
-        echo [INFO] 项目依赖安装完成
-    ) else (
-        echo [ERROR] 项目依赖安装失败
-        pause
-        exit /b 1
-    )
-) else (
-    echo [ERROR] 未找到 package.json 文件
-    pause
-    exit /b 1
-)
+goto :eof
 
 REM 创建配置文件
-echo [INFO] 正在创建配置文件...
+:create_config_files
+call :print_step "创建配置文件..."
 
 REM 创建 .env 文件
 if not exist ".env" (
@@ -119,66 +160,224 @@ if not exist ".env" (
         echo # SnakeSnake 环境配置
         echo NODE_ENV=development
         echo WECHAT_APPID=your-app-id-here
+        echo SERVER_URL=wss://your-websocket-server.com
         echo API_BASE_URL=https://your-api-server.com
-        echo WEBSOCKET_URL=wss://your-websocket-server.com
     ) > .env
-    echo [INFO] 创建 .env 配置文件
-)
-
-REM 创建 .env.example 文件
-if not exist ".env.example" (
-    (
-        echo # SnakeSnake 环境配置示例
-        echo NODE_ENV=development
-        echo WECHAT_APPID=your-app-id-here
-        echo API_BASE_URL=https://your-api-server.com
-        echo WEBSOCKET_URL=wss://your-websocket-server.com
-    ) > .env.example
-    echo [INFO] 创建 .env.example 配置文件
-)
-
-REM 运行测试
-echo [INFO] 正在运行测试...
-npm test
-if !errorLevel! == 0 (
-    echo [INFO] 测试通过
+    call :print_message "创建 .env 配置文件"
 ) else (
-    echo [ERROR] 测试失败
-    pause
+    call :print_message ".env 文件已存在"
+)
+
+REM 创建 .gitignore 文件
+if not exist ".gitignore" (
+    (
+        echo # 依赖
+        echo node_modules/
+        echo npm-debug.log*
+        echo yarn-debug.log*
+        echo yarn-error.log*
+        echo.
+        echo # 环境配置
+        echo .env
+        echo .env.local
+        echo .env.development.local
+        echo .env.test.local
+        echo .env.production.local
+        echo.
+        echo # 构建输出
+        echo dist/
+        echo build/
+        echo.
+        echo # 日志
+        echo logs/
+        echo *.log
+        echo.
+        echo # 运行时数据
+        echo pids/
+        echo *.pid
+        echo *.seed
+        echo *.pid.lock
+        echo.
+        echo # 覆盖率目录
+        echo coverage/
+        echo .nyc_output/
+        echo.
+        echo # 编辑器
+        echo .vscode/
+        echo .idea/
+        echo *.swp
+        echo *.swo
+        echo *~
+        echo.
+        echo # 操作系统
+        echo .DS_Store
+        echo Thumbs.db
+        echo.
+        echo # 微信开发者工具
+        echo .idea/
+        echo .vscode/
+    ) > .gitignore
+    call :print_message "创建 .gitignore 文件"
+) else (
+    call :print_message ".gitignore 文件已存在"
+)
+goto :eof
+
+REM 安装项目依赖
+:install_dependencies
+call :print_step "安装项目依赖..."
+
+if exist "package.json" (
+    call :print_message "正在安装 npm 依赖..."
+    call npm install
+    if %errorlevel% neq 0 (
+        call :print_error "npm 安装失败"
+        exit /b 1
+    )
+    
+    call :print_message "正在安装开发依赖..."
+    call npm install --save-dev
+    if %errorlevel% neq 0 (
+        call :print_warning "开发依赖安装失败，但继续执行"
+    )
+    
+    call :print_success "项目依赖安装完成"
+) else (
+    call :print_error "未找到 package.json 文件"
     exit /b 1
 )
+goto :eof
 
-REM 代码规范检查
-echo [INFO] 正在检查代码规范...
-npm run lint
-if !errorLevel! == 0 (
-    echo [INFO] 代码规范检查通过
+REM 检查项目结构
+:check_project_structure
+call :print_step "检查项目结构..."
+
+set "missing_files="
+set "missing_dirs="
+
+REM 检查必需文件
+if not exist "app.js" set "missing_files=!missing_files! app.js"
+if not exist "app.json" set "missing_files=!missing_files! app.json"
+if not exist "app.wxss" set "missing_files=!missing_files! app.wxss"
+if not exist "package.json" set "missing_files=!missing_files! package.json"
+if not exist "project.config.json" set "missing_files=!missing_files! project.config.json"
+
+REM 检查必需目录
+if not exist "pages" set "missing_dirs=!missing_dirs! pages"
+if not exist "images" set "missing_dirs=!missing_dirs! images"
+if not exist "docs" set "missing_dirs=!missing_dirs! docs"
+if not exist "scripts" set "missing_dirs=!missing_dirs! scripts"
+if not exist "tests" set "missing_dirs=!missing_dirs! tests"
+
+if "!missing_files!"=="" if "!missing_dirs!"=="" (
+    call :print_success "项目结构完整"
 ) else (
-    echo [WARNING] 代码规范检查发现问题，请查看详细信息
+    call :print_warning "项目结构不完整:"
+    if not "!missing_files!"=="" (
+        call :print_warning "缺少文件: !missing_files!"
+    )
+    if not "!missing_dirs!"=="" (
+        call :print_warning "缺少目录: !missing_dirs!"
+    )
 )
+goto :eof
+
+REM 运行测试
+:run_tests
+call :print_step "运行测试..."
+
+call npm test
+if %errorlevel% equ 0 (
+    call :print_success "测试通过"
+) else (
+    call :print_error "测试失败"
+    call :print_warning "是否继续? (y/n)"
+    set /p "response=请输入选择: "
+    if /i not "!response!"=="y" (
+        exit /b 1
+    )
+)
+goto :eof
+
+REM 运行代码检查
+:run_lint
+call :print_step "运行代码检查..."
+
+call npm run lint
+if %errorlevel% equ 0 (
+    call :print_success "代码检查通过"
+) else (
+    call :print_warning "代码检查发现问题"
+    call :print_warning "是否自动修复? (y/n)"
+    set /p "response=请输入选择: "
+    if /i "!response!"=="y" (
+        call npm run lint:fix
+        call :print_message "代码自动修复完成"
+    )
+)
+goto :eof
 
 REM 显示完成信息
+:show_completion_info
+call :print_header
+call :print_success "开发环境初始化完成！"
 echo.
-echo ================================
-echo 🎉 开发环境初始化完成！
-echo ================================
-echo.
-echo 下一步操作:
+call :print_message "下一步操作:"
 echo 1. 配置微信开发者工具
-echo 2. 在 .env 文件中配置你的 AppID
-echo 3. 运行 'npm run dev' 启动开发服务器
-echo 4. 在微信开发者工具中导入项目
+echo 2. 在 .env 文件中配置服务器地址
+echo 3. 在 project.config.json 中配置 AppID
+echo 4. 运行 'npm run dev' 启动开发服务器
+echo 5. 使用微信开发者工具打开项目
 echo.
-echo 常用命令:
-echo npm test          - 运行测试
-echo npm run lint      - 代码规范检查
-echo npm run build     - 构建项目
-echo npm run dev       - 启动开发服务器
+call :print_message "有用的命令:"
+echo - npm test          # 运行测试
+echo - npm run lint      # 代码检查
+echo - npm run docker:dev # 启动 Docker 开发环境
 echo.
-echo 文档链接:
-echo README.md                    - 项目介绍
-echo docs/architecture.md         - 架构设计
-echo docs/deployment-guide.md     - 发布指南
-echo docs/backend-recommendations.md - 后端实现推荐
+call :print_message "文档链接:"
+echo - 部署指南: docs/deployment-guide.md
+echo - Docker 指南: docs/docker-guide.md
+echo - 架构文档: docs/architecture.md
 echo.
-pause 
+call :print_message "技术支持:"
+echo - GitHub: https://github.com/zsjohny/snakesnake
+echo - 邮箱: zs.johny@163.com
+echo - 作者: JohnyZheng
+goto :eof
+
+REM 主函数
+:main
+call :print_header
+
+REM 检查基础工具
+call :install_nodejs
+call :install_npm
+call :install_git
+call :install_docker
+
+REM 创建配置文件
+call :create_config_files
+
+REM 安装项目依赖
+call :install_dependencies
+
+REM 检查项目结构
+call :check_project_structure
+
+REM 运行测试和检查
+call :run_tests
+call :run_lint
+
+REM 微信开发者工具提示
+call :print_step "微信开发者工具..."
+call :print_message "请手动安装微信开发者工具:"
+call :print_message "下载地址: https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html"
+
+REM 显示完成信息
+call :show_completion_info
+
+pause
+goto :eof
+
+REM 运行主函数
+call :main 

@@ -124,7 +124,7 @@ SnakeSnake/
    - 使用微信开发者工具打开项目
    - 编译运行即可体验
 
-#### 方法二：自动化初始化
+#### 方法二：自动化初始化（推荐）
 
 **Linux/macOS:**
 ```bash
@@ -138,6 +138,13 @@ npm run init:linux  # 或 npm run init:macos
 git clone https://github.com/zsjohny/snakesnake.git
 cd snakesnake
 npm run init:windows
+```
+
+**Docker 容器化开发:**
+```bash
+git clone https://github.com/zsjohny/snakesnake.git
+cd snakesnake
+npm run init:docker
 ```
 
 #### 方法三：Docker 容器化开发
@@ -158,6 +165,40 @@ globalData: {
   serverUrl: 'wss://your-websocket-server.com', // WebSocket服务器地址
   apiBaseUrl: 'https://your-api-server.com'     // API服务器地址
 }
+```
+
+### 开发命令
+
+```bash
+# 测试相关
+npm test              # 运行测试
+npm run test:watch    # 监听模式运行测试
+npm run test:coverage # 生成测试覆盖率报告
+
+# 代码质量
+npm run lint          # 代码检查
+npm run lint:fix      # 自动修复代码问题
+
+# 环境管理
+npm run init:linux    # Linux环境初始化
+npm run init:macos    # macOS环境初始化
+npm run init:windows  # Windows环境初始化
+npm run init:docker   # Docker环境初始化
+
+# Docker相关
+npm run docker:dev    # 启动开发环境
+npm run docker:test   # 启动测试环境
+npm run docker:prod   # 启动生产环境
+npm run docker:down   # 停止所有容器
+npm run docker:clean  # 清理Docker资源
+
+# 项目管理
+npm run setup         # 运行测试和代码检查
+npm run clean         # 清理并重新安装依赖
+npm run update        # 更新依赖包
+npm run security      # 安全审计
+npm run docs          # 查看文档
+npm run help          # 查看所有可用命令
 ```
 
 ## 📱 页面说明
