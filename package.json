@@ -10,7 +10,16 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "echo '微信小程序无需构建'",
-    "dev": "echo '请使用微信开发者工具打开项目'"
+    "dev": "echo '请使用微信开发者工具打开项目'",
+    "start": "echo '启动生产服务器...' && echo '请在微信开发者工具中预览或上传'",
+    "init:linux": "chmod +x scripts/init-dev.sh && ./scripts/init-dev.sh",
+    "init:macos": "chmod +x scripts/init-dev.sh && ./scripts/init-dev.sh",
+    "init:windows": "scripts\\init-dev.bat",
+    "docker:dev": "docker-compose up --build",
+    "docker:test": "docker-compose --profile test up --build",
+    "docker:prod": "docker-compose --profile production up -d --build",
+    "docker:down": "docker-compose down",
+    "docker:clean": "docker system prune -f"
   },
   "keywords": [
     "微信小程序",

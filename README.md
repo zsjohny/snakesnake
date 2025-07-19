@@ -85,11 +85,15 @@ SnakeSnake/
 ## 🚀 快速开始
 
 ### 环境要求
-- Node.js 18+
+- Node.js 18.0.0 或更高版本
+- npm 8.0.0 或更高版本
 - 微信开发者工具
-- 微信小程序账号
+- Git
+- Docker (可选，用于容器化开发)
 
 ### 安装步骤
+
+#### 方法一：传统安装
 
 1. **克隆项目**
    ```bash
@@ -119,6 +123,32 @@ SnakeSnake/
 6. **打开项目**
    - 使用微信开发者工具打开项目
    - 编译运行即可体验
+
+#### 方法二：自动化初始化
+
+**Linux/macOS:**
+```bash
+git clone https://github.com/zsjohny/snakesnake.git
+cd snakesnake
+npm run init:linux  # 或 npm run init:macos
+```
+
+**Windows:**
+```bash
+git clone https://github.com/zsjohny/snakesnake.git
+cd snakesnake
+npm run init:windows
+```
+
+#### 方法三：Docker 容器化开发
+
+```bash
+git clone https://github.com/zsjohny/snakesnake.git
+cd snakesnake
+npm run docker:dev
+```
+
+详细说明请参考 [Docker使用指南](docs/docker-guide.md)
 
 ### 配置说明
 
@@ -422,6 +452,8 @@ console.log(`操作耗时: ${endTime - startTime}ms`)
 
 - [架构设计文档](docs/architecture.md) - 详细的系统架构和设计图
 - [后端实现推荐](docs/backend-recommendations.md) - 推荐的开源后端解决方案
+- [发布指南](docs/deployment-guide.md) - 测试版和正式版发布方法
+- [Docker使用指南](docs/docker-guide.md) - Docker环境配置和使用
 - [开发手册](README.md#开发手册) - 完整的开发指南
 
 ## 📄 许可证

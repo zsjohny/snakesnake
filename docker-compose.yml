@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # 开发环境
+  snakesnake-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: snakesnake-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - WECHAT_APPID=${WECHAT_APPID:-your-app-id-here}
+      - API_BASE_URL=${API_BASE_URL:-https://your-api-server.com}
+      - WEBSOCKET_URL=${WEBSOCKET_URL:-wss://your-websocket-server.com}
+    networks:
+      - snakesnake-network
+    command: npm run dev
+
+  # 测试环境
+  snakesnake-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    container_name: snakesnake-test
+    environment:
+      - NODE_ENV=test
+    networks:
+      - snakesnake-network
+    profiles:
+      - test
+
+  # 生产环境
+  snakesnake-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: snakesnake-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - WECHAT_APPID=${WECHAT_APPID}
+      - API_BASE_URL=${API_BASE_URL}
+      - WEBSOCKET_URL=${WEBSOCKET_URL}
+    networks:
+      - snakesnake-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # 数据库服务 (可选)
+  mongodb:
+    image: mongo:latest
+    container_name: snakesnake-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-password}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE:-snakesnake}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - snakesnake-network
+    profiles:
+      - production
+
+  # Redis 缓存服务 (可选)
+  redis:
+    image: redis:alpine
+    container_name: snakesnake-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - snakesnake-network
+    profiles:
+      - production
+
+  # Nginx 反向代理 (可选)
+  nginx:
+    image: nginx:alpine
+    container_name: snakesnake-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - snakesnake-prod
+    networks:
+      - snakesnake-network
+    profiles:
+      - production
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  snakesnake-network:
+    driver: bridge 
