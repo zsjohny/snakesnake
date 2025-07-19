@@ -50,31 +50,31 @@ Page({
   // WebSocket连接
   socket: null,
 
-  onLoad () {
+  onLoad() {
     console.log('游戏页面加载')
     this.initGame()
   },
 
-  onShow () {
+  onShow() {
     // 页面显示时恢复游戏
     if (this.gameLoop && !this.data.isPaused && !this.data.isGameOver) {
       this.resumeGame()
     }
   },
 
-  onHide () {
+  onHide() {
     // 页面隐藏时暂停游戏
     if (this.gameLoop && !this.data.isGameOver) {
       this.pauseGame()
     }
   },
 
-  onUnload () {
+  onUnload() {
     // 页面卸载时清理资源
     this.cleanup()
   },
 
-  initGame () {
+  initGame() {
     // 获取游戏配置
     this.gameConfig = app.globalData.gameConfig
 
@@ -103,7 +103,7 @@ Page({
     this.startSpawnTimers()
   },
 
-  initCanvas () {
+  initCanvas() {
     // 获取画布上下文
     this.canvas = wx.createCanvasContext('gameCanvas')
     this.ctx = this.canvas
@@ -119,7 +119,7 @@ Page({
     this.ctx.draw()
   },
 
-  initGameState () {
+  initGameState() {
     // 初始化蛇的位置
     const startX =
       Math.floor(this.gameConfig.canvasWidth / this.gameConfig.gridSize / 2) *
@@ -160,7 +160,7 @@ Page({
     })
   },
 
-  connectWebSocket () {
+  connectWebSocket() {
     // 模拟WebSocket连接
     // 实际项目中需要连接真实的WebSocket服务器
     console.log('连接WebSocket服务器...')
@@ -169,7 +169,7 @@ Page({
     this.simulateOtherPlayers()
   },
 
-  simulateOtherPlayers () {
+  simulateOtherPlayers() {
     // 模拟其他玩家数据
     setInterval(() => {
       const playerCount = Math.floor(Math.random() * 10) + 5
@@ -195,7 +195,7 @@ Page({
     }, 2000)
   },
 
-  generateRandomSnake () {
+  generateRandomSnake() {
     const snake = []
     const startX =
       Math.floor(
@@ -218,7 +218,7 @@ Page({
     return snake
   },
 
-  getRandomColor () {
+  getRandomColor() {
     const colors = [
       '#e74c3c',
       '#3498db',
@@ -230,7 +230,7 @@ Page({
     return colors[Math.floor(Math.random() * colors.length)]
   },
 
-  startGameLoop () {
+  startGameLoop() {
     this.gameLoop = setInterval(() => {
       if (!this.data.isPaused && !this.data.isGameOver) {
         this.updateGame()
@@ -239,7 +239,7 @@ Page({
     }, this.gameConfig.gameSpeed)
   },
 
-  updateGame () {
+  updateGame() {
     // 更新蛇的方向
     this.direction = this.nextDirection
 
@@ -265,7 +265,7 @@ Page({
     this.sendPositionUpdate()
   },
 
-  moveSnake () {
+  moveSnake() {
     const head = { ...this.snake[0] }
 
     // 根据方向移动蛇头
@@ -303,7 +303,7 @@ Page({
     }
   },
 
-  checkCollision () {
+  checkCollision() {
     const head = this.snake[0]
 
     // 检查是否撞到自己
@@ -325,7 +325,7 @@ Page({
     return false
   },
 
-  checkFoodCollision () {
+  checkFoodCollision() {
     const head = this.snake[0]
 
     for (let i = 0; i < this.food.length; i++) {
@@ -346,7 +346,7 @@ Page({
     return false
   },
 
-  checkGiftCollision () {
+  checkGiftCollision() {
     const head = this.snake[0]
 
     for (let i = 0; i < this.gifts.length; i++) {
@@ -368,7 +368,7 @@ Page({
     return false
   },
 
-  checkBlackHoleCollision () {
+  checkBlackHoleCollision() {
     const head = this.snake[0]
 
     for (let i = 0; i < this.blackHoles.length; i++) {
@@ -382,7 +382,7 @@ Page({
     return false
   },
 
-  generateFood () {
+  generateFood() {
     while (this.food.length < 5) {
       const food = {
         x:
@@ -412,7 +412,7 @@ Page({
     }
   },
 
-  startSpawnTimers () {
+  startSpawnTimers() {
     // 礼包生成定时器
     setInterval(() => {
       if (this.gifts.length < this.gameConfig.maxGifts) {
@@ -428,7 +428,7 @@ Page({
     }, this.gameConfig.blackHoleSpawnInterval)
   },
 
-  spawnGift () {
+  spawnGift() {
     const gift = {
       x:
         Math.floor(
@@ -452,7 +452,7 @@ Page({
     })
   },
 
-  spawnBlackHole () {
+  spawnBlackHole() {
     const blackHole = {
       x:
         Math.floor(
@@ -472,7 +472,7 @@ Page({
     })
   },
 
-  applyGiftEffect (type) {
+  applyGiftEffect(type) {
     switch (type) {
       case 'speed':
         // 临时加速
@@ -492,7 +492,7 @@ Page({
     }
   },
 
-  temporarySpeedBoost () {
+  temporarySpeedBoost() {
     const originalSpeed = this.gameConfig.gameSpeed
     this.gameConfig.gameSpeed = originalSpeed / 2
 
@@ -501,12 +501,12 @@ Page({
     }, 5000)
   },
 
-  temporaryShield () {
+  temporaryShield() {
     // 实现护盾效果
     console.log('护盾激活')
   },
 
-  randomTeleport () {
+  randomTeleport() {
     const head = this.snake[0]
     head.x =
       Math.floor(
@@ -519,7 +519,7 @@ Page({
       ) * this.gameConfig.gridSize
   },
 
-  renderGame () {
+  renderGame() {
     // 清空画布
     this.ctx.setFillStyle('#2c3e50')
     this.ctx.fillRect(
@@ -551,7 +551,7 @@ Page({
     this.ctx.draw()
   },
 
-  drawGrid () {
+  drawGrid() {
     this.ctx.setStrokeStyle('#34495e')
     this.ctx.setLineWidth(1)
 
@@ -578,7 +578,7 @@ Page({
     }
   },
 
-  drawFood () {
+  drawFood() {
     this.ctx.setFillStyle('#e74c3c')
     for (const food of this.food) {
       this.ctx.fillRect(
@@ -590,7 +590,7 @@ Page({
     }
   },
 
-  drawGifts () {
+  drawGifts() {
     this.ctx.setFillStyle('#f39c12')
     for (const gift of this.gifts) {
       this.ctx.fillRect(
@@ -602,7 +602,7 @@ Page({
     }
   },
 
-  drawBlackHoles () {
+  drawBlackHoles() {
     this.ctx.setFillStyle('#000000')
     for (const blackHole of this.blackHoles) {
       this.ctx.beginPath()
@@ -617,7 +617,7 @@ Page({
     }
   },
 
-  drawOtherPlayers () {
+  drawOtherPlayers() {
     for (const player of this.otherPlayers) {
       this.ctx.setFillStyle(player.color)
       for (const segment of player.snake) {
@@ -631,7 +631,7 @@ Page({
     }
   },
 
-  drawSnake () {
+  drawSnake() {
     // 绘制蛇身
     this.ctx.setFillStyle('#2ecc71')
     for (let i = 1; i < this.snake.length; i++) {
@@ -654,41 +654,41 @@ Page({
   },
 
   // 控制方法
-  moveUp () {
+  moveUp() {
     if (this.direction !== 'down') {
       this.nextDirection = 'up'
     }
   },
 
-  moveDown () {
+  moveDown() {
     if (this.direction !== 'up') {
       this.nextDirection = 'down'
     }
   },
 
-  moveLeft () {
+  moveLeft() {
     if (this.direction !== 'right') {
       this.nextDirection = 'left'
     }
   },
 
-  moveRight () {
+  moveRight() {
     if (this.direction !== 'left') {
       this.nextDirection = 'right'
     }
   },
 
   // 触摸控制
-  onTouchStart (e) {
+  onTouchStart(e) {
     this.touchStartX = e.touches[0].clientX
     this.touchStartY = e.touches[0].clientY
   },
 
-  onTouchMove (e) {
+  onTouchMove(e) {
     e.preventDefault()
   },
 
-  onTouchEnd (e) {
+  onTouchEnd(e) {
     const touchEndX = e.changedTouches[0].clientX
     const touchEndY = e.changedTouches[0].clientY
 
@@ -714,19 +714,19 @@ Page({
   },
 
   // 游戏控制
-  pauseGame () {
+  pauseGame() {
     this.setData({
       isPaused: true
     })
   },
 
-  resumeGame () {
+  resumeGame() {
     this.setData({
       isPaused: false
     })
   },
 
-  gameOver () {
+  gameOver() {
     this.setData({
       isGameOver: true
     })
@@ -741,19 +741,19 @@ Page({
     this.sendGameResult()
   },
 
-  restartGame () {
+  restartGame() {
     this.cleanup()
     this.initGame()
   },
 
-  quitGame () {
+  quitGame() {
     this.cleanup()
     wx.switchTab({
       url: '/pages/index/index'
     })
   },
 
-  backToHome () {
+  backToHome() {
     this.cleanup()
     wx.switchTab({
       url: '/pages/index/index'
@@ -761,26 +761,26 @@ Page({
   },
 
   // 功能按钮
-  useSpeedBoost () {
+  useSpeedBoost() {
     this.temporarySpeedBoost()
   },
 
-  useShield () {
+  useShield() {
     this.temporaryShield()
   },
 
-  useTeleport () {
+  useTeleport() {
     this.randomTeleport()
   },
 
   // 排行榜
-  toggleRanking () {
+  toggleRanking() {
     this.setData({
       showRanking: !this.data.showRanking
     })
   },
 
-  updateRanking () {
+  updateRanking() {
     const allPlayers = [
       {
         id: 'current_player',
@@ -819,7 +819,7 @@ Page({
   },
 
   // 聊天功能
-  openChat () {
+  openChat() {
     wx.showToast({
       title: '聊天功能开发中',
       icon: 'none'
@@ -827,13 +827,13 @@ Page({
   },
 
   // 工具方法
-  addScore (points) {
+  addScore(points) {
     this.setData({
       score: this.data.score + points
     })
   },
 
-  startGameTimer () {
+  startGameTimer() {
     this.gameStartTime = Date.now()
     this.gameTimer = setInterval(() => {
       const elapsed = Math.floor((Date.now() - this.gameStartTime) / 1000)
@@ -845,17 +845,17 @@ Page({
     }, 1000)
   },
 
-  sendPositionUpdate () {
+  sendPositionUpdate() {
     // 发送位置更新到服务器
     // 实际项目中需要实现WebSocket发送
   },
 
-  sendGameResult () {
+  sendGameResult() {
     // 发送游戏结果到服务器
     // 实际项目中需要实现WebSocket发送
   },
 
-  cleanup () {
+  cleanup() {
     // 清理资源
     if (this.gameLoop) {
       clearInterval(this.gameLoop)

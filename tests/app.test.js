@@ -5,48 +5,54 @@
 // 导入app.js
 require('../app.js')
 
-describe('App 全局配置测试', () => {
+// 创建模拟App实例的辅助函数
+const createMockAppInstance = () => ({
+  globalData: {
+    userInfo: null,
+    gameConfig: {
+      canvasWidth: 800,
+      canvasHeight: 600,
+      gridSize: 20,
+      gameSpeed: 150,
+      maxPlayers: 20,
+      giftSpawnInterval: 10000,
+      blackHoleSpawnInterval: 15000,
+      maxGifts: 10,
+      maxBlackHoles: 5
+    },
+    serverUrl: 'wss://test-server.com',
+    apiBaseUrl: 'https://test-api.com'
+  },
+  onLaunch: jest.fn(),
+  checkUpdate: jest.fn(),
+  getUserInfo: jest.fn(),
+  initGameConfig: jest.fn(),
+  onError: jest.fn(),
+  onUnhandledRejection: jest.fn()
+})
+
+// 重置测试环境的辅助函数
+const resetTestEnvironment = () => {
+  App.mockClear()
+  jest.resetModules()
+  require('../app.js')
+}
+
+// 获取App实例的辅助函数
+const getAppInstance = () => {
+  const appCall = App.mock.calls[0]
+  if (appCall && appCall[0]) {
+    return appCall[0]
+  }
+  return createMockAppInstance()
+}
+
+describe('App 基础配置测试', () => {
   let appInstance
 
   beforeEach(() => {
-    // 重置App调用
-    App.mockClear()
-
-    // 重新导入app.js以触发App调用
-    jest.resetModules()
-    require('../app.js')
-
-    // 获取App实例
-    const appCall = App.mock.calls[0]
-    if (appCall && appCall[0]) {
-      appInstance = appCall[0]
-    } else {
-      // 如果App没有被调用，创建一个模拟实例
-      appInstance = {
-        globalData: {
-          userInfo: null,
-          gameConfig: {
-            canvasWidth: 800,
-            canvasHeight: 600,
-            gridSize: 20,
-            gameSpeed: 150,
-            maxPlayers: 20,
-            giftSpawnInterval: 10000,
-            blackHoleSpawnInterval: 15000,
-            maxGifts: 10,
-            maxBlackHoles: 5
-          },
-          serverUrl: 'wss://test-server.com',
-          apiBaseUrl: 'https://test-api.com'
-        },
-        onLaunch: jest.fn(),
-        checkUpdate: jest.fn(),
-        getUserInfo: jest.fn(),
-        initGameConfig: jest.fn(),
-        onError: jest.fn(),
-        onUnhandledRejection: jest.fn()
-      }
-    }
+    resetTestEnvironment()
+    appInstance = getAppInstance()
   })
 
   test('App应该被正确调用', () => {
@@ -74,6 +80,15 @@ describe('App 全局配置测试', () => {
     expect(gameConfig.maxGifts).toBe(10)
     expect(gameConfig.maxBlackHoles).toBe(5)
   })
+})
+
+describe('App 方法存在性测试', () => {
+  let appInstance
+
+  beforeEach(() => {
+    resetTestEnvironment()
+    appInstance = getAppInstance()
+  })
 
   test('onLaunch方法应该存在', () => {
     expect(typeof appInstance.onLaunch).toBe('function')
@@ -97,6 +112,15 @@ describe('App 全局配置测试', () => {
 
   test('onUnhandledRejection方法应该存在', () => {
     expect(typeof appInstance.onUnhandledRejection).toBe('function')
+  })
+})
+
+describe('App 配置功能测试', () => {
+  let appInstance
+
+  beforeEach(() => {
+    resetTestEnvironment()
+    appInstance = getAppInstance()
   })
 
   test('initGameConfig应该根据屏幕尺寸调整配置', () => {
@@ -128,6 +152,15 @@ describe('App 全局配置测试', () => {
     expect(wx.getUpdateManager).toHaveBeenCalled()
     expect(mockUpdateManager.onCheckForUpdate).toHaveBeenCalled()
   })
+})
+
+describe('App 用户功能测试', () => {
+  let appInstance
+
+  beforeEach(() => {
+    resetTestEnvironment()
+    appInstance = getAppInstance()
+  })
 
   test('getUserInfo应该正确处理用户信息', () => {
     const mockUserInfo = {
@@ -152,6 +185,15 @@ describe('App 全局配置测试', () => {
     appInstance.getUserInfo()
 
     expect(wx.getSetting).toHaveBeenCalled()
+  })
+})
+
+describe('App 错误处理测试', () => {
+  let appInstance
+
+  beforeEach(() => {
+    resetTestEnvironment()
+    appInstance = getAppInstance()
   })
 
   test('onError应该正确处理错误', () => {

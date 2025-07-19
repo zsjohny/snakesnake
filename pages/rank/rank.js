@@ -19,31 +19,31 @@ Page({
     pageSize: 20
   },
 
-  onLoad () {
+  onLoad() {
     console.log('排行榜页面加载')
     this.loadUserInfo()
     this.loadMyRanking()
     this.loadRankingList()
   },
 
-  onShow () {
+  onShow() {
     // 页面显示时刷新数据
     this.loadMyRanking()
   },
 
-  onPullDownRefresh () {
+  onPullDownRefresh() {
     // 下拉刷新
     this.refreshData()
   },
 
-  onReachBottom () {
+  onReachBottom() {
     // 上拉加载更多
     if (this.data.hasMore && !this.data.loading) {
       this.loadMore()
     }
   },
 
-  loadUserInfo () {
+  loadUserInfo() {
     const userInfo = app.globalData.userInfo
     if (userInfo) {
       this.setData({
@@ -52,7 +52,7 @@ Page({
     }
   },
 
-  loadMyRanking () {
+  loadMyRanking() {
     // 模拟加载我的排名信息
     // 实际项目中应该从服务器获取
     this.setData({
@@ -64,7 +64,7 @@ Page({
     })
   },
 
-  loadRankingList () {
+  loadRankingList() {
     this.setData({
       loading: true
     })
@@ -82,8 +82,8 @@ Page({
     }, 1000)
   },
 
-  generateMockRankingData () {
-    const data = []
+  // 生成玩家名称的辅助函数
+  getRandomPlayerName() {
     const names = [
       '王者归来',
       '蛇王',
@@ -101,28 +101,33 @@ Page({
       '游戏王者',
       '蛇神之王'
     ]
+    return names[Math.floor(Math.random() * names.length)]
+  },
 
-    for (let i = 0; i < this.data.pageSize; i++) {
-      const score = Math.floor(Math.random() * 20000) + 1000
-      const snakeLength = Math.floor(Math.random() * 50) + 10
-      const gameTime = `${Math.floor(Math.random() * 10)}:${Math.floor(
-        Math.random() * 60
-      )
-        .toString()
-        .padStart(2, '0')}`
+  // 生成单个玩家数据的辅助函数
+  generatePlayerData(index) {
+    const score = Math.floor(Math.random() * 20000) + 1000
+    const snakeLength = Math.floor(Math.random() * 50) + 10
+    const gameTime = `${Math.floor(Math.random() * 10)}:${Math.floor(
+      Math.random() * 60
+    )
+      .toString()
+      .padStart(2, '0')}`
 
-      data.push({
-        id: `player_${i}`,
-        name: names[Math.floor(Math.random() * names.length)],
-        avatar: `/images/avatar_${Math.floor(Math.random() * 5) + 1}.png`,
-        score,
-        snakeLength,
-        gameTime,
-        level: Math.floor(Math.random() * 50) + 1,
-        rank: i + 1
-      })
+    return {
+      id: `player_${index}`,
+      name: this.getRandomPlayerName(),
+      avatar: `/images/avatar_${Math.floor(Math.random() * 5) + 1}.png`,
+      score,
+      snakeLength,
+      gameTime,
+      level: Math.floor(Math.random() * 50) + 1,
+      rank: index + 1
     }
+  },
 
+  // 排序并重新分配排名的辅助函数
+  sortAndRankData(data) {
     // 按分数排序
     data.sort((a, b) => b.score - a.score)
 
@@ -134,7 +139,17 @@ Page({
     return data
   },
 
-  switchTab (e) {
+  generateMockRankingData() {
+    const data = []
+
+    for (let i = 0; i < this.data.pageSize; i++) {
+      data.push(this.generatePlayerData(i))
+    }
+
+    return this.sortAndRankData(data)
+  },
+
+  switchTab(e) {
     const tab = e.currentTarget.dataset.tab
     if (tab === this.data.currentTab) return
 
@@ -148,7 +163,7 @@ Page({
     this.loadRankingList()
   },
 
-  loadMore () {
+  loadMore() {
     if (this.data.loading || !this.data.hasMore) return
 
     this.setData({
@@ -174,7 +189,7 @@ Page({
     }, 1000)
   },
 
-  refreshData () {
+  refreshData() {
     this.setData({
       rankingList: [],
       page: 1,
@@ -187,7 +202,7 @@ Page({
     wx.stopPullDownRefresh()
   },
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: '🏆 贪食蛇大战排行榜 - 看看谁是最强王者',
       path: '/pages/rank/rank',
@@ -195,7 +210,7 @@ Page({
     }
   },
 
-  onShareTimeline () {
+  onShareTimeline() {
     return {
       title: '🏆 贪食蛇大战排行榜 - 看看谁是最强王者',
       imageUrl: '/images/share-rank.png'

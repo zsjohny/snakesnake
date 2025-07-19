@@ -11,7 +11,7 @@ Page({
     userInfo: null
   },
 
-  onLoad () {
+  onLoad() {
     console.log('首页加载')
     this.initData()
     this.loadUserInfo()
@@ -20,12 +20,12 @@ Page({
     this.loadNotices()
   },
 
-  onShow () {
+  onShow() {
     // 页面显示时刷新数据
     this.loadGameStats()
   },
 
-  initData () {
+  initData() {
     // 初始化数据
     this.setData({
       onlinePlayers: 0,
@@ -37,7 +37,7 @@ Page({
     })
   },
 
-  loadUserInfo () {
+  loadUserInfo() {
     const userInfo = app.globalData.userInfo
     if (userInfo) {
       this.setData({
@@ -60,7 +60,7 @@ Page({
     }
   },
 
-  loadGameStats () {
+  loadGameStats() {
     // 模拟加载游戏统计数据
     // 实际项目中应该从服务器获取
     this.setData({
@@ -71,7 +71,7 @@ Page({
     })
   },
 
-  loadRecentGames () {
+  loadRecentGames() {
     // 模拟加载最近游戏记录
     const recentGames = [
       {
@@ -99,7 +99,7 @@ Page({
     })
   },
 
-  loadNotices () {
+  loadNotices() {
     // 模拟加载游戏公告
     const notices = [
       {
@@ -124,7 +124,7 @@ Page({
     })
   },
 
-  startGame () {
+  startGame() {
     console.log('开始游戏')
 
     // 检查用户信息
@@ -157,14 +157,14 @@ Page({
     })
   },
 
-  viewRanking () {
+  viewRanking() {
     console.log('查看排行榜')
     wx.switchTab({
       url: '/pages/rank/rank'
     })
   },
 
-  viewTutorial () {
+  viewTutorial() {
     console.log('查看教程')
     wx.showModal({
       title: '游戏教程',
@@ -175,7 +175,7 @@ Page({
     })
   },
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: '🐍 贪食蛇大战 - 多人在线实时对战',
       path: '/pages/index/index',
@@ -183,7 +183,7 @@ Page({
     }
   },
 
-  onShareTimeline () {
+  onShareTimeline() {
     return {
       title: '🐍 贪食蛇大战 - 多人在线实时对战',
       imageUrl: '/images/share.png'

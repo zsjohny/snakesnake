@@ -16,7 +16,7 @@ App({
     apiBaseUrl: 'https://your-api-server.com' // 需要替换为实际的API服务器地址
   },
 
-  onLaunch () {
+  onLaunch() {
     console.log('贪食蛇大战小程序启动')
 
     // 检查更新
@@ -29,7 +29,7 @@ App({
     this.initGameConfig()
   },
 
-  checkUpdate () {
+  checkUpdate() {
     if (wx.canIUse('getUpdateManager')) {
       const updateManager = wx.getUpdateManager()
       updateManager.onCheckForUpdate(res => {
@@ -50,7 +50,7 @@ App({
     }
   },
 
-  getUserInfo () {
+  getUserInfo() {
     wx.getSetting({
       success: res => {
         if (res.authSetting['scope.userInfo']) {
@@ -64,7 +64,7 @@ App({
     })
   },
 
-  initGameConfig () {
+  initGameConfig() {
     // 根据设备屏幕大小调整游戏配置
     const systemInfo = wx.getSystemInfoSync()
     const screenWidth = systemInfo.screenWidth
@@ -76,12 +76,12 @@ App({
   },
 
   // 全局错误处理
-  onError (msg) {
+  onError(msg) {
     console.error('小程序错误:', msg)
   },
 
   // 全局未处理的Promise拒绝
-  onUnhandledRejection (res) {
+  onUnhandledRejection(res) {
     console.error('未处理的Promise拒绝:', res.reason)
   }
 })

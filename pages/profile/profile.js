@@ -24,7 +24,7 @@ Page({
     recentGames: []
   },
 
-  onLoad () {
+  onLoad() {
     console.log('个人资料页面加载')
     this.loadUserInfo()
     this.loadGameStats()
@@ -32,12 +32,12 @@ Page({
     this.loadRecentGames()
   },
 
-  onShow () {
+  onShow() {
     // 页面显示时刷新数据
     this.loadGameStats()
   },
 
-  loadUserInfo () {
+  loadUserInfo() {
     const userInfo = app.globalData.userInfo
     if (userInfo) {
       this.setData({
@@ -66,12 +66,12 @@ Page({
     })
   },
 
-  generateUserId () {
+  generateUserId() {
     // 生成6位数字用户ID
     return Math.floor(100000 + Math.random() * 900000).toString()
   },
 
-  loadGameStats () {
+  loadGameStats() {
     // 模拟加载游戏统计数据
     // 实际项目中应该从服务器获取
     this.setData({
@@ -84,9 +84,9 @@ Page({
     })
   },
 
-  loadAchievements () {
-    // 模拟加载成就数据
-    const achievements = [
+  // 生成基础成就数据的辅助函数
+  generateBasicAchievements() {
+    return [
       {
         id: 1,
         icon: '🎯',
@@ -118,7 +118,13 @@ Page({
         description: '蛇身长度达到50',
         progress: 60,
         unlocked: false
-      },
+      }
+    ]
+  },
+
+  // 生成高级成就数据的辅助函数
+  generateAdvancedAchievements() {
+    return [
       {
         id: 5,
         icon: '⚡',
@@ -152,17 +158,31 @@ Page({
         unlocked: true
       }
     ]
+  },
 
+  // 生成成就数据的辅助函数
+  generateAchievementsData() {
+    const basicAchievements = this.generateBasicAchievements()
+    const advancedAchievements = this.generateAdvancedAchievements()
+    return [...basicAchievements, ...advancedAchievements]
+  },
+
+  // 更新成就统计的辅助函数
+  updateAchievementStats(achievements) {
     const unlockedCount = achievements.filter(item => item.unlocked).length
-
     this.setData({
-      achievements,
       achievementCount: unlockedCount,
       totalAchievements: achievements.length
     })
   },
 
-  loadRecentGames () {
+  loadAchievements() {
+    const achievements = this.generateAchievementsData()
+    this.setData({ achievements })
+    this.updateAchievementStats(achievements)
+  },
+
+  loadRecentGames() {
     // 模拟加载最近游戏记录
     const recentGames = [
       {
@@ -208,7 +228,7 @@ Page({
   },
 
   // 用户操作
-  editProfile () {
+  editProfile() {
     wx.showModal({
       title: '编辑资料',
       content: '功能开发中，敬请期待！',
@@ -217,7 +237,7 @@ Page({
     })
   },
 
-  viewAllHistory () {
+  viewAllHistory() {
     wx.showModal({
       title: '游戏历史',
       content: '完整游戏历史功能开发中！',
@@ -227,7 +247,7 @@ Page({
   },
 
   // 设置功能
-  openSoundSettings () {
+  openSoundSettings() {
     wx.showModal({
       title: '音效设置',
       content: '音效设置功能开发中！',
@@ -236,7 +256,7 @@ Page({
     })
   },
 
-  openControlSettings () {
+  openControlSettings() {
     wx.showModal({
       title: '控制设置',
       content: '控制设置功能开发中！',
@@ -245,7 +265,7 @@ Page({
     })
   },
 
-  openNotificationSettings () {
+  openNotificationSettings() {
     wx.showModal({
       title: '通知设置',
       content: '通知设置功能开发中！',
@@ -254,7 +274,7 @@ Page({
     })
   },
 
-  openPrivacySettings () {
+  openPrivacySettings() {
     wx.showModal({
       title: '隐私设置',
       content: '隐私设置功能开发中！',
@@ -264,14 +284,14 @@ Page({
   },
 
   // 其他功能
-  shareApp () {
+  shareApp() {
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
     })
   },
 
-  rateApp () {
+  rateApp() {
     wx.showModal({
       title: '评价应用',
       content: '感谢您的支持！请在应用商店给我们五星好评！',
@@ -280,7 +300,7 @@ Page({
     })
   },
 
-  contactSupport () {
+  contactSupport() {
     wx.showModal({
       title: '联系客服',
       content: '客服QQ: 123456789\n客服微信: snakegame_support',
@@ -289,7 +309,7 @@ Page({
     })
   },
 
-  aboutApp () {
+  aboutApp() {
     wx.showModal({
       title: '关于应用',
       content:
@@ -299,7 +319,7 @@ Page({
     })
   },
 
-  logout () {
+  logout() {
     wx.showModal({
       title: '退出登录',
       content: '确定要退出登录吗？',
@@ -323,7 +343,7 @@ Page({
     })
   },
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: '🐍 贪食蛇大战 - 多人在线实时对战',
       path: '/pages/index/index',
@@ -331,7 +351,7 @@ Page({
     }
   },
 
-  onShareTimeline () {
+  onShareTimeline() {
     return {
       title: '🐍 贪食蛇大战 - 多人在线实时对战',
       imageUrl: '/images/share.png'
