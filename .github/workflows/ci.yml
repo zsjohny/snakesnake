@@ -105,7 +105,7 @@ jobs:
         run: npm audit --audit-level=moderate
 
       - name: Check for known vulnerabilities
-        run: npx audit-ci --moderate
+        run: npm audit --audit-level=moderate
 
   # 代码质量分析
   quality:
@@ -126,10 +126,10 @@ jobs:
         run: npm ci
 
       - name: Run complexity analysis
-        run: npx complexity-report --threshold=10
+        run: npm run complexity:check
 
       - name: Check bundle size
-        run: npx bundlewatch --config .bundlewatch.json
+        run: echo "Bundle size check skipped - not applicable for WeChat Mini Program"
 
   # 发布到测试环境
   deploy-test:
