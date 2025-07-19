@@ -1,0 +1,177 @@
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="card user-card">
+    <view class="user-header">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-info">
+        <text class="user-name">{{userInfo.nickName || '未知玩家'}}</text>
+        <text class="user-level">等级 {{userLevel}}</text>
+        <text class="user-id">ID: {{userId}}</text>
+      </view>
+      <view class="user-actions">
+        <button class="btn btn-small" bindtap="editProfile">
+          <text class="btn-text">编辑</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏统计卡片 -->
+  <view class="card stats-card">
+    <view class="stats-header">
+      <text class="stats-title">游戏统计</text>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-number">{{totalGames}}</text>
+        <text class="stat-label">总游戏数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{totalScore}}</text>
+        <text class="stat-label">总分数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{bestScore}}</text>
+        <text class="stat-label">最高分</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{winRate}}%</text>
+        <text class="stat-label">胜率</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{totalTime}}</text>
+        <text class="stat-label">游戏时长</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{maxLength}}</text>
+        <text class="stat-label">最长蛇身</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 成就卡片 -->
+  <view class="card achievement-card">
+    <view class="achievement-header">
+      <text class="achievement-title">🏆 成就系统</text>
+      <text class="achievement-progress">{{achievementCount}}/{{totalAchievements}}</text>
+    </view>
+    <view class="achievement-list">
+      <view class="achievement-item {{item.unlocked ? 'unlocked' : 'locked'}}" wx:for="{{achievements}}" wx:key="id">
+        <view class="achievement-icon">
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <view class="achievement-info">
+          <text class="achievement-name">{{item.name}}</text>
+          <text class="achievement-desc">{{item.description}}</text>
+          <view class="achievement-progress-bar">
+            <view class="progress-fill" style="width: {{item.progress}}%"></view>
+          </view>
+        </view>
+        <view class="achievement-status">
+          <text class="status-text">{{item.unlocked ? '已获得' : item.progress + '%'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近游戏记录 -->
+  <view class="card history-card">
+    <view class="history-header">
+      <text class="history-title">最近游戏</text>
+      <text class="history-more" bindtap="viewAllHistory">查看全部</text>
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{recentGames}}" wx:key="id">
+        <view class="history-info">
+          <text class="history-time">{{item.time}}</text>
+          <text class="history-score">得分: {{item.score}}</text>
+        </view>
+        <view class="history-details">
+          <text class="detail-text">排名: 第{{item.rank}}名</text>
+          <text class="detail-text">时长: {{item.duration}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置选项 -->
+  <view class="card settings-card">
+    <view class="settings-header">
+      <text class="settings-title">⚙️ 设置</text>
+    </view>
+    <view class="settings-list">
+      <view class="setting-item" bindtap="openSoundSettings">
+        <view class="setting-info">
+          <text class="setting-icon">🔊</text>
+          <text class="setting-name">音效设置</text>
+        </view>
+        <text class="setting-arrow">></text>
+      </view>
+      <view class="setting-item" bindtap="openControlSettings">
+        <view class="setting-info">
+          <text class="setting-icon">🎮</text>
+          <text class="setting-name">控制设置</text>
+        </view>
+        <text class="setting-arrow">></text>
+      </view>
+      <view class="setting-item" bindtap="openNotificationSettings">
+        <view class="setting-info">
+          <text class="setting-icon">🔔</text>
+          <text class="setting-name">通知设置</text>
+        </view>
+        <text class="setting-arrow">></text>
+      </view>
+      <view class="setting-item" bindtap="openPrivacySettings">
+        <view class="setting-info">
+          <text class="setting-icon">🔒</text>
+          <text class="setting-name">隐私设置</text>
+        </view>
+        <text class="setting-arrow">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 其他功能 -->
+  <view class="card function-card">
+    <view class="function-header">
+      <text class="function-title">📱 其他功能</text>
+    </view>
+    <view class="function-list">
+      <view class="function-item" bindtap="shareApp">
+        <view class="function-info">
+          <text class="function-icon">📤</text>
+          <text class="function-name">分享应用</text>
+        </view>
+        <text class="function-arrow">></text>
+      </view>
+      <view class="function-item" bindtap="rateApp">
+        <view class="function-info">
+          <text class="function-icon">⭐</text>
+          <text class="function-name">评价应用</text>
+        </view>
+        <text class="function-arrow">></text>
+      </view>
+      <view class="function-item" bindtap="contactSupport">
+        <view class="function-info">
+          <text class="function-icon">💬</text>
+          <text class="function-name">联系客服</text>
+        </view>
+        <text class="function-arrow">></text>
+      </view>
+      <view class="function-item" bindtap="aboutApp">
+        <view class="function-info">
+          <text class="function-icon">ℹ️</text>
+          <text class="function-name">关于应用</text>
+        </view>
+        <text class="function-arrow">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="btn btn-danger btn-large" bindtap="logout">
+      <text class="btn-text">退出登录</text>
+    </button>
+  </view>
+</view> 

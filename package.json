@@ -1,0 +1,58 @@
+{
+  "name": "snakesnake",
+  "version": "1.0.0",
+  "description": "多人在线贪食蛇大战微信小程序",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "echo '微信小程序无需构建'",
+    "dev": "echo '请使用微信开发者工具打开项目'"
+  },
+  "keywords": [
+    "微信小程序",
+    "贪食蛇",
+    "多人在线",
+    "游戏",
+    "实时对战"
+  ],
+  "author": "JohnyZheng <zs.johny@163.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zsjohny/snakesnake.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zsjohny/snakesnake/issues"
+  },
+  "homepage": "https://github.com/zsjohny/snakesnake#readme",
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jest": "^28.14.0",
+    "eslint-plugin-n": "^16.3.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "pages/**/*.js",
+      "utils/**/*.js",
+      "!**/node_modules/**"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ]
+  }
+}

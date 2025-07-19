@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/game/game",
+    "pages/rank/rank",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#2c3e50",
+    "navigationBarTitleText": "贪食蛇大战",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#34495e"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3498db",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/game/game",
+        "iconPath": "images/game.png",
+        "selectedIconPath": "images/game-active.png",
+        "text": "游戏"
+      },
+      {
+        "pagePath": "pages/rank/rank",
+        "iconPath": "images/rank.png",
+        "selectedIconPath": "images/rank-active.png",
+        "text": "排行榜"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "images/profile.png",
+        "selectedIconPath": "images/profile-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true
+} 

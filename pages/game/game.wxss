@@ -1,0 +1,364 @@
+/* 游戏页面样式 */
+.game-container {
+  height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* 游戏状态栏 */
+.game-status {
+  display: flex;
+  justify-content: space-around;
+  padding: 20rpx;
+  background: rgba(44, 62, 80, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-bottom: 2rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.status-item {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status-label {
+  font-size: 24rpx;
+  color: #95a5a6;
+  margin-bottom: 5rpx;
+}
+
+.status-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+/* 游戏画布容器 */
+.game-canvas-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+}
+
+.game-canvas {
+  border: 4rpx solid #2c3e50;
+  border-radius: 15rpx;
+  background-color: #2c3e50;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.5);
+}
+
+/* 游戏遮罩 */
+.game-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.overlay-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20rpx;
+  padding: 60rpx 40rpx;
+  text-align: center;
+  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.overlay-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+  margin-bottom: 30rpx;
+}
+
+.overlay-score,
+.overlay-rank {
+  display: block;
+  font-size: 32rpx;
+  color: #f39c12;
+  margin-bottom: 20rpx;
+}
+
+/* 游戏控制面板 */
+.game-controls {
+  padding: 30rpx;
+  background: rgba(44, 62, 80, 0.9);
+  backdrop-filter: blur(10rpx);
+}
+
+/* 方向控制 */
+.direction-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.direction-row {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  margin: 5rpx 0;
+}
+
+.direction-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 15rpx rgba(52, 152, 219, 0.4);
+  transition: all 0.2s ease;
+}
+
+.direction-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(52, 152, 219, 0.4);
+}
+
+.direction-center {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.direction-icon {
+  font-size: 36rpx;
+  color: white;
+  font-weight: bold;
+}
+
+/* 功能控制 */
+.function-controls {
+  display: flex;
+  justify-content: space-around;
+  gap: 20rpx;
+}
+
+.btn-small {
+  padding: 15rpx 25rpx;
+  font-size: 24rpx;
+  border-radius: 30rpx;
+  min-width: 120rpx;
+}
+
+/* 实时排行榜 */
+.live-ranking {
+  position: absolute;
+  top: 50%;
+  right: 20rpx;
+  transform: translateY(-50%);
+  background: rgba(44, 62, 80, 0.95);
+  border-radius: 15rpx;
+  padding: 20rpx;
+  min-width: 300rpx;
+  max-height: 400rpx;
+  overflow-y: auto;
+  z-index: 100;
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.ranking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 10rpx;
+  border-bottom: 2rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.ranking-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.ranking-close {
+  font-size: 36rpx;
+  color: #95a5a6;
+  cursor: pointer;
+  padding: 5rpx;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 8rpx;
+}
+
+.ranking-info {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.ranking-number {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #f39c12;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+  font-weight: bold;
+}
+
+.ranking-number.top-1 {
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #2c3e50;
+}
+
+.ranking-number.top-2 {
+  background: linear-gradient(45deg, #c0c0c0, #e5e5e5);
+  color: #2c3e50;
+}
+
+.ranking-number.top-3 {
+  background: linear-gradient(45deg, #cd7f32, #daa520);
+  color: white;
+}
+
+.ranking-name {
+  font-size: 24rpx;
+  color: #ecf0f1;
+  max-width: 150rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-score {
+  font-size: 24rpx;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+/* 游戏信息面板 */
+.game-info-panel {
+  position: absolute;
+  top: 120rpx;
+  left: 20rpx;
+  background: rgba(44, 62, 80, 0.9);
+  border-radius: 15rpx;
+  padding: 20rpx;
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+  min-width: 200rpx;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+.info-value {
+  font-size: 24rpx;
+  color: #ecf0f1;
+  font-weight: bold;
+}
+
+/* 浮动按钮 */
+.float-buttons {
+  position: absolute;
+  bottom: 200rpx;
+  right: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  z-index: 50;
+}
+
+.float-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.float-btn:active {
+  transform: scale(0.95);
+}
+
+.float-btn-icon {
+  font-size: 32rpx;
+}
+
+.chat-btn {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .game-status {
+    padding: 15rpx;
+  }
+  
+  .status-value {
+    font-size: 28rpx;
+  }
+  
+  .direction-btn {
+    width: 70rpx;
+    height: 70rpx;
+  }
+  
+  .direction-icon {
+    font-size: 32rpx;
+  }
+  
+  .live-ranking {
+    right: 10rpx;
+    min-width: 250rpx;
+  }
+  
+  .game-info-panel {
+    left: 10rpx;
+    padding: 15rpx;
+  }
+  
+  .float-buttons {
+    right: 10rpx;
+    bottom: 150rpx;
+  }
+} 

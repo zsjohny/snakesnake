@@ -1,0 +1,440 @@
+/* 个人资料页面样式 */
+.container {
+  padding: 30rpx;
+  min-height: 100vh;
+}
+
+/* 用户信息卡片 */
+.user-card {
+  margin-bottom: 30rpx;
+}
+
+.user-header {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.user-level {
+  font-size: 28rpx;
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.user-id {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+.user-actions {
+  display: flex;
+  gap: 10rpx;
+}
+
+/* 游戏统计卡片 */
+.stats-card {
+  margin-bottom: 30rpx;
+}
+
+.stats-header {
+  margin-bottom: 20rpx;
+}
+
+.stats-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 20rpx;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 15rpx;
+  border: 2rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.stat-number {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #3498db;
+  margin-bottom: 5rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+/* 成就卡片 */
+.achievement-card {
+  margin-bottom: 30rpx;
+}
+
+.achievement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.achievement-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.achievement-progress {
+  font-size: 28rpx;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.achievement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+  padding: 15rpx;
+  background: rgba(44, 62, 80, 0.3);
+  border-radius: 10rpx;
+  transition: all 0.3s ease;
+}
+
+.achievement-item.unlocked {
+  background: rgba(46, 204, 113, 0.1);
+  border: 2rpx solid rgba(46, 204, 113, 0.3);
+}
+
+.achievement-item.locked {
+  opacity: 0.6;
+}
+
+.achievement-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: rgba(52, 152, 219, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievement-item.unlocked .achievement-icon {
+  background: rgba(46, 204, 113, 0.2);
+}
+
+.icon-text {
+  font-size: 32rpx;
+}
+
+.achievement-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.achievement-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.achievement-desc {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+.achievement-progress-bar {
+  width: 100%;
+  height: 6rpx;
+  background: rgba(44, 62, 80, 0.5);
+  border-radius: 3rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border-radius: 3rpx;
+  transition: width 0.3s ease;
+}
+
+.achievement-item.unlocked .progress-fill {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
+}
+
+.achievement-status {
+  text-align: right;
+}
+
+.status-text {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+.achievement-item.unlocked .status-text {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+/* 最近游戏记录 */
+.history-card {
+  margin-bottom: 30rpx;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.history-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.history-more {
+  font-size: 28rpx;
+  color: #3498db;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.history-item {
+  padding: 15rpx;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 10rpx;
+  border-left: 4rpx solid #3498db;
+}
+
+.history-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.history-time {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+.history-score {
+  font-size: 28rpx;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.history-details {
+  display: flex;
+  gap: 20rpx;
+}
+
+.detail-text {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+/* 设置卡片 */
+.settings-card {
+  margin-bottom: 30rpx;
+}
+
+.settings-header {
+  margin-bottom: 20rpx;
+}
+
+.settings-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5rpx;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(44, 62, 80, 0.3);
+  border-radius: 10rpx;
+  transition: all 0.3s ease;
+}
+
+.setting-item:active {
+  background: rgba(52, 152, 219, 0.2);
+  transform: scale(0.98);
+}
+
+.setting-info {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.setting-icon {
+  font-size: 32rpx;
+  width: 40rpx;
+  text-align: center;
+}
+
+.setting-name {
+  font-size: 28rpx;
+  color: #ecf0f1;
+}
+
+.setting-arrow {
+  font-size: 28rpx;
+  color: #95a5a6;
+}
+
+/* 功能卡片 */
+.function-card {
+  margin-bottom: 30rpx;
+}
+
+.function-header {
+  margin-bottom: 20rpx;
+}
+
+.function-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.function-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5rpx;
+}
+
+.function-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: rgba(44, 62, 80, 0.3);
+  border-radius: 10rpx;
+  transition: all 0.3s ease;
+}
+
+.function-item:active {
+  background: rgba(52, 152, 219, 0.2);
+  transform: scale(0.98);
+}
+
+.function-info {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.function-icon {
+  font-size: 32rpx;
+  width: 40rpx;
+  text-align: center;
+}
+
+.function-name {
+  font-size: 28rpx;
+  color: #ecf0f1;
+}
+
+.function-arrow {
+  font-size: 28rpx;
+  color: #95a5a6;
+}
+
+/* 退出登录 */
+.logout-section {
+  margin-top: 30rpx;
+  text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .container {
+    padding: 20rpx;
+  }
+  
+  .user-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .user-actions {
+    margin-top: 15rpx;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 15rpx;
+  }
+  
+  .achievement-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10rpx;
+  }
+  
+  .achievement-status {
+    align-self: flex-end;
+  }
+  
+  .history-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5rpx;
+  }
+  
+  .history-details {
+    flex-direction: column;
+    gap: 5rpx;
+  }
+} 

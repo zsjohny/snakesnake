@@ -1,0 +1,137 @@
+<view class="game-container">
+  <!-- 游戏状态栏 -->
+  <view class="game-status">
+    <view class="status-item">
+      <text class="status-label">分数</text>
+      <text class="status-value">{{score}}</text>
+    </view>
+    <view class="status-item">
+      <text class="status-label">长度</text>
+      <text class="status-value">{{snakeLength}}</text>
+    </view>
+    <view class="status-item">
+      <text class="status-label">排名</text>
+      <text class="status-value">{{rank}}</text>
+    </view>
+    <view class="status-item">
+      <text class="status-label">在线</text>
+      <text class="status-value">{{onlinePlayers}}</text>
+    </view>
+  </view>
+
+  <!-- 游戏画布 -->
+  <view class="game-canvas-container">
+    <canvas 
+      canvas-id="gameCanvas" 
+      class="game-canvas"
+      style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd">
+    </canvas>
+    
+    <!-- 游戏暂停遮罩 -->
+    <view class="game-overlay" wx:if="{{isPaused}}">
+      <view class="overlay-content">
+        <text class="overlay-title">游戏暂停</text>
+        <button class="btn btn-primary" bindtap="resumeGame">继续游戏</button>
+        <button class="btn btn-danger" bindtap="quitGame">退出游戏</button>
+      </view>
+    </view>
+
+    <!-- 游戏结束遮罩 -->
+    <view class="game-overlay" wx:if="{{isGameOver}}">
+      <view class="overlay-content">
+        <text class="overlay-title">游戏结束</text>
+        <text class="overlay-score">最终得分: {{score}}</text>
+        <text class="overlay-rank">最终排名: 第{{rank}}名</text>
+        <button class="btn btn-primary" bindtap="restartGame">重新开始</button>
+        <button class="btn btn-success" bindtap="backToHome">返回首页</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏控制面板 -->
+  <view class="game-controls">
+    <!-- 方向控制 -->
+    <view class="direction-controls">
+      <view class="direction-row">
+        <view class="direction-btn direction-up" bindtap="moveUp">
+          <text class="direction-icon">↑</text>
+        </view>
+      </view>
+      <view class="direction-row">
+        <view class="direction-btn direction-left" bindtap="moveLeft">
+          <text class="direction-icon">←</text>
+        </view>
+        <view class="direction-btn direction-center" bindtap="pauseGame">
+          <text class="direction-icon">⏸</text>
+        </view>
+        <view class="direction-btn direction-right" bindtap="moveRight">
+          <text class="direction-icon">→</text>
+        </view>
+      </view>
+      <view class="direction-row">
+        <view class="direction-btn direction-down" bindtap="moveDown">
+          <text class="direction-icon">↓</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能按钮 -->
+    <view class="function-controls">
+      <button class="btn btn-warning btn-small" bindtap="useSpeedBoost">
+        <text class="btn-text">加速</text>
+      </button>
+      <button class="btn btn-success btn-small" bindtap="useShield">
+        <text class="btn-text">护盾</text>
+      </button>
+      <button class="btn btn-danger btn-small" bindtap="useTeleport">
+        <text class="btn-text">传送</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 实时排行榜 -->
+  <view class="live-ranking" wx:if="{{showRanking}}">
+    <view class="ranking-header">
+      <text class="ranking-title">实时排行榜</text>
+      <text class="ranking-close" bindtap="toggleRanking">×</text>
+    </view>
+    <view class="ranking-list">
+      <view class="ranking-item" wx:for="{{rankingList}}" wx:key="id">
+        <view class="ranking-info">
+          <text class="ranking-number {{item.rank <= 3 ? 'top-' + item.rank : ''}}">{{item.rank}}</text>
+          <text class="ranking-name">{{item.name}}</text>
+        </view>
+        <text class="ranking-score">{{item.score}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏信息面板 -->
+  <view class="game-info-panel">
+    <view class="info-item">
+      <text class="info-label">礼包数量:</text>
+      <text class="info-value">{{giftCount}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">黑洞数量:</text>
+      <text class="info-value">{{blackHoleCount}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">游戏时间:</text>
+      <text class="info-value">{{gameTime}}</text>
+    </view>
+  </view>
+
+  <!-- 浮动按钮 -->
+  <view class="float-buttons">
+    <view class="float-btn ranking-btn" bindtap="toggleRanking">
+      <text class="float-btn-icon">🏆</text>
+    </view>
+    <view class="float-btn chat-btn" bindtap="openChat">
+      <text class="float-btn-icon">💬</text>
+    </view>
+  </view>
+</view> 

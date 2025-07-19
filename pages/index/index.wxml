@@ -1,0 +1,107 @@
+<view class="container">
+  <!-- 游戏标题 -->
+  <view class="game-title">
+    <text class="title-text">🐍 贪食蛇大战</text>
+    <text class="subtitle-text">多人在线实时对战</text>
+  </view>
+
+  <!-- 游戏介绍卡片 -->
+  <view class="card intro-card">
+    <view class="intro-header">
+      <text class="intro-title">游戏特色</text>
+    </view>
+    <view class="intro-content">
+      <view class="feature-item">
+        <text class="feature-icon">🎮</text>
+        <text class="feature-text">多人在线实时对战</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🌍</text>
+        <text class="feature-text">超大游戏区域</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🏆</text>
+        <text class="feature-text">实时排行榜</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🎁</text>
+        <text class="feature-text">定期刷新礼包</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">⚫</text>
+        <text class="feature-text">神秘黑洞陷阱</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏统计 -->
+  <view class="card stats-card">
+    <view class="stats-header">
+      <text class="stats-title">游戏统计</text>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-number">{{onlinePlayers}}</text>
+        <text class="stat-label">在线玩家</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{totalGames}}</text>
+        <text class="stat-label">总游戏数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{myRank}}</text>
+        <text class="stat-label">我的排名</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{myScore}}</text>
+        <text class="stat-label">我的分数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn btn-primary btn-large" bindtap="startGame">
+      <text class="btn-text">开始游戏</text>
+    </button>
+    
+    <button class="btn btn-success btn-large" bindtap="viewRanking">
+      <text class="btn-text">查看排行榜</text>
+    </button>
+    
+    <button class="btn btn-warning btn-large" bindtap="viewTutorial">
+      <text class="btn-text">游戏教程</text>
+    </button>
+  </view>
+
+  <!-- 最近游戏记录 -->
+  <view class="card history-card" wx:if="{{recentGames.length > 0}}">
+    <view class="history-header">
+      <text class="history-title">最近游戏</text>
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{recentGames}}" wx:key="id">
+        <view class="history-info">
+          <text class="history-time">{{item.time}}</text>
+          <text class="history-score">得分: {{item.score}}</text>
+        </view>
+        <view class="history-rank">
+          <text class="rank-text">第{{item.rank}}名</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏公告 -->
+  <view class="card notice-card" wx:if="{{notices.length > 0}}">
+    <view class="notice-header">
+      <text class="notice-title">游戏公告</text>
+    </view>
+    <view class="notice-list">
+      <view class="notice-item" wx:for="{{notices}}" wx:key="id">
+        <text class="notice-content">{{item.content}}</text>
+        <text class="notice-time">{{item.time}}</text>
+      </view>
+    </view>
+  </view>
+</view> 

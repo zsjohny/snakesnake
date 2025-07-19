@@ -1,0 +1,261 @@
+/* 首页样式 */
+.container {
+  padding: 30rpx;
+  min-height: 100vh;
+}
+
+/* 游戏标题 */
+.game-title {
+  text-align: center;
+  margin-bottom: 40rpx;
+  animation: fadeIn 1s ease-out;
+}
+
+.title-text {
+  display: block;
+  font-size: 72rpx;
+  font-weight: bold;
+  background: linear-gradient(45deg, #3498db, #2ecc71, #f39c12, #e74c3c);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+.subtitle-text {
+  display: block;
+  font-size: 28rpx;
+  color: #95a5a6;
+  margin-top: 10rpx;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 介绍卡片 */
+.intro-card {
+  margin-bottom: 30rpx;
+}
+
+.intro-header {
+  margin-bottom: 20rpx;
+}
+
+.intro-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.intro-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.feature-icon {
+  font-size: 32rpx;
+  width: 40rpx;
+  text-align: center;
+}
+
+.feature-text {
+  font-size: 28rpx;
+  color: #ecf0f1;
+}
+
+/* 统计卡片 */
+.stats-card {
+  margin-bottom: 30rpx;
+}
+
+.stats-header {
+  margin-bottom: 20rpx;
+}
+
+.stats-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 20rpx;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 15rpx;
+  border: 2rpx solid rgba(52, 152, 219, 0.3);
+}
+
+.stat-number {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #3498db;
+  margin-bottom: 5rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.btn-large {
+  padding: 30rpx 40rpx;
+  font-size: 36rpx;
+  border-radius: 60rpx;
+  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-large:active {
+  transform: translateY(4rpx);
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3);
+}
+
+.btn-text {
+  font-weight: bold;
+}
+
+/* 历史记录卡片 */
+.history-card {
+  margin-bottom: 30rpx;
+}
+
+.history-header {
+  margin-bottom: 20rpx;
+}
+
+.history-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15rpx;
+  background: rgba(52, 152, 219, 0.1);
+  border-radius: 10rpx;
+  border-left: 4rpx solid #3498db;
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5rpx;
+}
+
+.history-time {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+.history-score {
+  font-size: 28rpx;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.history-rank {
+  background: #f39c12;
+  color: white;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+/* 公告卡片 */
+.notice-card {
+  margin-bottom: 30rpx;
+}
+
+.notice-header {
+  margin-bottom: 20rpx;
+}
+
+.notice-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.notice-item {
+  padding: 15rpx;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 10rpx;
+  border-left: 4rpx solid #e74c3c;
+}
+
+.notice-content {
+  display: block;
+  font-size: 28rpx;
+  color: #ecf0f1;
+  margin-bottom: 5rpx;
+}
+
+.notice-time {
+  font-size: 24rpx;
+  color: #95a5a6;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .container {
+    padding: 20rpx;
+  }
+  
+  .title-text {
+    font-size: 56rpx;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .btn-large {
+    padding: 25rpx 30rpx;
+    font-size: 32rpx;
+  }
+} 
